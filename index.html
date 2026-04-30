@@ -23,14 +23,23 @@ function draw(){
   const w = canvas.width;
   const h = canvas.height;
 
-  ctx.fillStyle = "#121212";
-  ctx.fillRect(0,0,w,h);
-
   const cx = w/2;
   const cy = h/2;
   const r = Math.min(w,h)*0.2;
 
-  // 🌙 HALO (draw FIRST - important)
+  // 🌌 SKY (subtle depth)
+  const sky = ctx.createRadialGradient(
+    cx, cy, r*0.5,
+    cx, cy, Math.max(w,h)
+  );
+
+  sky.addColorStop(0, "#1a1a1a");
+  sky.addColorStop(1, "#0f0f0f");
+
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,w,h);
+
+  // 🌙 HALO
   const halo = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r*2.2);
   halo.addColorStop(0, "rgba(200,200,200,0.08)");
   halo.addColorStop(1, "rgba(0,0,0,0)");
@@ -54,7 +63,7 @@ function draw(){
   ctx.fillStyle = base;
   ctx.fill();
 
-  // 🌗 PHASE (ellipse shadow)
+  // 🌗 PHASE
   const phase = getPhase();
 
   ctx.fillStyle = "#121212";
