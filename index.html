@@ -30,20 +30,6 @@ window.addEventListener("resize", resize);
 
  
 
-// Use a more reliable image source
-
-const img = new Image();
-
-img.crossOrigin = "anonymous";
-
-img.src = https://raw.githubusercontent.com/mdn/webgl-examples/main/tutorial/sample6/moon.jpg;
-
- 
-
-img.onload = () => draw();
-
- 
-
 function draw(){
 
   const w = canvas.width;
@@ -58,73 +44,81 @@ function draw(){
 
  
 
-  const size = Math.min(w,h)*0.42;
-
   const cx = w/2;
 
   const cy = h/2;
 
+  const r = Math.min(w,h)*0.2;
+
  
 
-  ctx.save();
+  // create radial gradient (fake moon texture)
+
+  const grad = ctx.createRadialGradient(
+
+    cx - r*0.3, cy - r*0.3, r*0.2,
+
+    cx, cy, r
+
+  );
+
+ 
+
+  grad.addColorStop(0, "#ddd");
+
+  grad.addColorStop(0.4, "#bbb");
+
+  grad.addColorStop(1, "#777");
 
  
 
   ctx.beginPath();
 
-  ctx.arc(cx,cy,size/2,0,Math.PI*2);
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
 
-  ctx.clip();
+  ctx.fillStyle = grad;
 
- 
-
-  ctx.drawImage(img,cx-size/2,cy-size/2,size,size);
+  ctx.fill();
 
  
 
   // soften contrast
 
-  ctx.fillStyle="rgba(0,0,0,0.25)";
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
 
-  ctx.fillRect(cx-size/2,cy-size/2,size,size);
+  ctx.beginPath();
 
- 
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
 
-  // reduce highlights
-
-  ctx.globalCompositeOperation="multiply";
-
-  ctx.fillStyle="rgba(235,235,230,0.9)";
-
-  ctx.fillRect(cx-size/2,cy-size/2,size,size);
+  ctx.fill();
 
  
 
-  ctx.restore();
+  // edge fade
+
+  const fade = ctx.createRadialGradient(cx, cy, r*0.7, cx, cy, r);
+
+  fade.addColorStop(0, "rgba(0,0,0,1)");
+
+  fade.addColorStop(1, "rgba(0,0,0,0)");
 
  
 
-  // soft edge fade
+  ctx.globalCompositeOperation = "destination-in";
 
-  const grad = ctx.createRadialGradient(cx,cy,size*0.45,cx,cy,size*0.62);
-
-  grad.addColorStop(0,"rgba(0,0,0,1)");
-
-  grad.addColorStop(1,"rgba(0,0,0,0)");
-
- 
-
-  ctx.globalCompositeOperation="destination-in";
-
-  ctx.fillStyle=grad;
+  ctx.fillStyle = fade;
 
   ctx.fillRect(0,0,w,h);
 
  
 
-  ctx.globalCompositeOperation="source-over";
+  ctx.globalCompositeOperation = "source-over";
 
 }
+
+ 
+
+draw();
 
 </script>
 
@@ -133,3 +127,5 @@ function draw(){
 </body>
 
 </html>
+
+ 
