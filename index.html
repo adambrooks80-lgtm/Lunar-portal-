@@ -16,23 +16,119 @@ const ctx = canvas.getContext("2d");
 
  
 
-canvas.width = window.innerWidth;
+function resize(){
 
-canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+
+  canvas.height = window.innerHeight;
+
+}
+
+resize();
+
+window.addEventListener("resize", resize);
 
  
 
-// draw a test circle
+// Use a more reliable image source
 
-ctx.fillStyle = "white";
+const img = new Image();
 
-ctx.beginPath();
+img.crossOrigin = "anonymous";
 
-ctx.arc(canvas.width/2, canvas.height/2, 100, 0, Math.PI*2);
+img.src = https://raw.githubusercontent.com/mdn/webgl-examples/main/tutorial/sample6/moon.jpg;
 
-ctx.fill();
+ 
+
+img.onload = () => draw();
+
+ 
+
+function draw(){
+
+  const w = canvas.width;
+
+  const h = canvas.height;
+
+ 
+
+  ctx.fillStyle = "#121212";
+
+  ctx.fillRect(0,0,w,h);
+
+ 
+
+  const size = Math.min(w,h)*0.42;
+
+  const cx = w/2;
+
+  const cy = h/2;
+
+ 
+
+  ctx.save();
+
+ 
+
+  ctx.beginPath();
+
+  ctx.arc(cx,cy,size/2,0,Math.PI*2);
+
+  ctx.clip();
+
+ 
+
+  ctx.drawImage(img,cx-size/2,cy-size/2,size,size);
+
+ 
+
+  // soften contrast
+
+  ctx.fillStyle="rgba(0,0,0,0.25)";
+
+  ctx.fillRect(cx-size/2,cy-size/2,size,size);
+
+ 
+
+  // reduce highlights
+
+  ctx.globalCompositeOperation="multiply";
+
+  ctx.fillStyle="rgba(235,235,230,0.9)";
+
+  ctx.fillRect(cx-size/2,cy-size/2,size,size);
+
+ 
+
+  ctx.restore();
+
+ 
+
+  // soft edge fade
+
+  const grad = ctx.createRadialGradient(cx,cy,size*0.45,cx,cy,size*0.62);
+
+  grad.addColorStop(0,"rgba(0,0,0,1)");
+
+  grad.addColorStop(1,"rgba(0,0,0,0)");
+
+ 
+
+  ctx.globalCompositeOperation="destination-in";
+
+  ctx.fillStyle=grad;
+
+  ctx.fillRect(0,0,w,h);
+
+ 
+
+  ctx.globalCompositeOperation="source-over";
+
+}
 
 </script>
+
+ 
 
 </body>
 
