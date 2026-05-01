@@ -43,10 +43,15 @@ function createStars(){
 
 resize();
 
-// 🌗 REAL MOON PHASE (29.53 days)
+// 🌗 REAL MOON PHASE (fixed)
 function getPhase(){
   const now = Date.now();
-  const days = now / (1000 * 60 * 60 * 24);
+
+  // Known new moon reference
+  const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
+
+  const days = (now - newMoon) / (1000 * 60 * 60 * 24);
+
   return (days % 29.53) / 29.53;
 }
 
@@ -54,6 +59,7 @@ function getPhase(){
 function getDayFactor(){
   const now = new Date();
   const hours = now.getHours() + now.getMinutes()/60;
+
   return 0.5 + 0.5 * Math.cos((hours - 12) * Math.PI / 12);
 }
 
@@ -77,7 +83,7 @@ function drawStars(dayFactor){
   }
 }
 
-// 🌙 TEXTURE
+// 🌙 TEXTURE (soft craters)
 function drawTexture(cx, cy, r){
   ctx.globalAlpha = 0.06;
 
@@ -154,8 +160,10 @@ function draw(){
   ctx.fillStyle = base;
   ctx.fillRect(cx - r, cy - r, r*2, r*2);
 
+  // 🌙 TEXTURE
   drawTexture(cx, cy, r);
 
+  // 🌗 PHASE
   const phase = getPhase();
 
   ctx.fillStyle = "#121212";
