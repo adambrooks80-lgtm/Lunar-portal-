@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<body style="margin:0;background:#2a2a2a;">
+<body style="margin:0;background:black;">
 <canvas id="c"></canvas>
 
 <script>
@@ -14,7 +14,7 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-// fixed phase for now
+// fixed phase
 const phase = 0.25;
 
 function draw(){
@@ -25,20 +25,20 @@ function draw(){
   const cy = h/2;
   const r = 120;
 
-  // background
-  ctx.fillStyle = "#2a2a2a";
+  // background (pure black)
+  ctx.fillStyle = "black";
   ctx.fillRect(0,0,w,h);
 
-  // moon (solid fill)
-  ctx.fillStyle = "#bbbbbb";
+  // moon (bright yellow so impossible to miss)
+  ctx.fillStyle = "yellow";
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI*2);
   ctx.fill();
 
-  // shadow (second circle)
+  // shadow (pure black)
   const offset = Math.cos(phase * Math.PI * 2) * r;
 
-  ctx.fillStyle = "#2a2a2a";
+  ctx.fillStyle = "black";
   ctx.beginPath();
   ctx.arc(cx + offset, cy, r, 0, Math.PI*2);
   ctx.fill();
