@@ -25,7 +25,7 @@
     box-shadow: 0 0 100px 30px rgba(200,200,200,0.12);
   "></div>
 
-  <!-- 🌙 real texture -->
+  <!-- 🌙 base moon -->
   <div style="
     position:absolute;
     width:100%;
@@ -36,14 +36,27 @@
     background-size: cover;
   "></div>
 
-  <!-- 🌗 shadow (true geometry) -->
+  <!-- 🌗 shadow shape -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    background:black;
+    background: rgba(0,0,0,0.85);
     transform:translateX(80px);
+    filter: blur(6px); /* 👈 key softness */
+  "></div>
+
+  <!-- 🌙 shadow detail (faint texture in dark side) -->
+  <div id="darkTexture" style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size: cover;
+    opacity:0.15;
+    mix-blend-mode: lighten;
   "></div>
 
 </div>
@@ -64,7 +77,6 @@ function updateMoon(){
 
   const phase = ((now - newMoon) % cycle) / cycle;
 
-  // true crescent geometry
   const offset = Math.cos(phase * Math.PI * 2);
 
   shadow.style.transform = `translateX(${offset * 130}px)`;
