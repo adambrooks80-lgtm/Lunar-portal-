@@ -14,10 +14,10 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-// fixed phase for now
+// test phase (0–1)
 const phase = 0.25;
 
-// stable texture (generated once)
+// stable texture
 let craters = [];
 function createTexture(){
   const r = Math.min(canvas.width, canvas.height)*0.18;
@@ -41,27 +41,24 @@ function draw(){
   const cy = h/2;
   const r = Math.min(w,h)*0.18;
 
-  // sky (not pure black)
   ctx.fillStyle = "#1a1a1a";
   ctx.fillRect(0,0,w,h);
 
-  // moon base
+  // 🌙 Draw full moon
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI*2);
   ctx.fillStyle = "#d0d0d0";
   ctx.fill();
 
-  // shadow (soft — not destructive)
-  const shift = Math.cos(phase * Math.PI * 2) * r;
+  // 🌗 Draw shadow using second circle (CLEAR crescent)
+  const offset = Math.cos(phase * Math.PI * 2) * r;
 
-  ctx.globalCompositeOperation = "multiply";
   ctx.beginPath();
-  ctx.arc(cx + shift, cy, r, 0, Math.PI*2);
-  ctx.fillStyle = "rgba(0,0,0,0.75)";
+  ctx.arc(cx + offset, cy, r, 0, Math.PI*2);
+  ctx.fillStyle = "#1a1a1a"; // same as sky
   ctx.fill();
-  ctx.globalCompositeOperation = "source-over";
 
-  // texture (stable — no spinning)
+  // 🌙 Texture (stable)
   ctx.globalAlpha = 0.05;
   for(let c of craters){
     ctx.beginPath();
