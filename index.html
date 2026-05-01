@@ -19,7 +19,7 @@
   height:260px;
 ">
 
-  <!-- 🌫️ HALO (fixed centre + subtle bias) -->
+  <!-- 🌫️ HALO -->
   <div id="halo" style="
     position:absolute;
     width:160%;
@@ -27,7 +27,6 @@
     top:-30%;
     left:-30%;
     border-radius:50%;
-    pointer-events:none;
     background: radial-gradient(
       circle at center,
       rgba(255,255,255,0.12),
@@ -36,10 +35,9 @@
       transparent 75%
     );
     filter: blur(25px);
-    opacity:0.9;
   "></div>
 
-  <!-- 🌙 BRIGHT MOON -->
+  <!-- 🌙 MOON -->
   <div style="
     position:absolute;
     width:100%;
@@ -50,7 +48,7 @@
   "></div>
 
   <!-- 🌑 EARTHSHINE -->
-  <div id="earthshine" style="
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
@@ -60,7 +58,7 @@
     opacity:0.10;
   "></div>
 
-  <!-- 🌗 SOFT TERMINATOR -->
+  <!-- 🌗 TERMINATOR -->
   <div style="
     position:absolute;
     width:100%;
@@ -111,6 +109,7 @@ const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 const mask = document.getElementById("mask");
 const halo = document.getElementById("halo");
+const moonWrap = document.getElementById("moonWrap");
 
 function updateMoon(){
   const now = Date.now();
@@ -121,11 +120,17 @@ function updateMoon(){
 
   const offset = Math.cos(angle) * 260;
 
-  // 🌗 phase movement
+  // 🌗 shadow movement
   mask.style.transform = `translateX(${offset}px)`;
 
-  // 🌫️ VERY subtle halo shift (less than before)
+  // 🌫️ halo slight follow
   halo.style.transform = `translateX(${offset * 0.05}px)`;
+
+  // 🌙 subtle rotation (THIS is the fix)
+  const tilt = Math.sin(angle) * 10; // gentle oscillation
+  moonWrap.style.transform = `
+    translate(-50%,-50%) rotate(${12 + tilt}deg)
+  `;
 
   requestAnimationFrame(updateMoon);
 }
@@ -133,7 +138,7 @@ function updateMoon(){
 updateMoon();
 
 
-// ⭐ STARS (visible but subtle)
+// ⭐ STARS
 const starContainer = document.getElementById("stars");
 let stars = [];
 
@@ -162,7 +167,6 @@ function createStars(){
 
 createStars();
 
-// ✨ subtle twinkle (magic)
 function twinkle(){
   for(let s of stars){
     s.style.opacity += (Math.random()-0.5)*0.02;
