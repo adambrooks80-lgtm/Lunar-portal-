@@ -10,6 +10,9 @@
 <!-- ⭐ STARS -->
 <div id="stars"></div>
 
+<!-- ✨ SHOOTING STARS -->
+<div id="shootingStars"></div>
+
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -86,15 +89,25 @@
 </div>
 
 <style>
-#stars{
+#stars, #shootingStars {
   position:absolute;
   width:100%;
   height:100%;
+  pointer-events:none;
 }
-.star{
+
+.star {
   position:absolute;
   background:white;
   border-radius:50%;
+}
+
+.shooting-star {
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:white;
+  box-shadow: 0 0 6px white;
 }
 </style>
 
@@ -120,14 +133,14 @@ function updateMoon(){
 
   const offset = Math.cos(angle) * 260;
 
-  // 🌗 shadow movement
+  // shadow movement
   mask.style.transform = `translateX(${offset}px)`;
 
-  // 🌫️ halo slight follow
+  // halo slight shift
   halo.style.transform = `translateX(${offset * 0.05}px)`;
 
-  // 🌙 subtle rotation (THIS is the fix)
-  const tilt = Math.sin(angle) * 10; // gentle oscillation
+  // 🌍 realistic tilt variation (very subtle)
+  const tilt = Math.sin(angle * 0.5) * 8;
   moonWrap.style.transform = `
     translate(-50%,-50%) rotate(${12 + tilt}deg)
   `;
@@ -138,7 +151,7 @@ function updateMoon(){
 updateMoon();
 
 
-// ⭐ STARS
+// ⭐ STARS (with drift)
 const starContainer = document.getElementById("stars");
 let stars = [];
 
@@ -167,15 +180,78 @@ function createStars(){
 
 createStars();
 
-function twinkle(){
+function updateStars(){
   for(let s of stars){
+    // 🌌 very slow drift
+    s.x += 0.02;
+
+    if(s.x > window.innerWidth){
+      s.x = 0;
+      s.y = Math.random()*window.innerHeight;
+    }
+
+    // ✨ subtle twinkle
     s.style.opacity += (Math.random()-0.5)*0.02;
     s.style.opacity = Math.max(0.1, Math.min(0.7, s.style.opacity));
+
+    s.style.left = s.x+"px";
   }
-  requestAnimationFrame(twinkle);
+
+  requestAnimationFrame(updateStars);
 }
 
-twinkle();
+updateStars();
+
+
+// ✨ SHOOTING STARS (random + rare)
+const shootingContainer = document.getElementById("shootingStars");
+
+function createShootingStar(){
+  const star = document.createElement("div");
+  star.className = "shooting-star";
+
+  const startX = Math.random()*window.innerWidth;
+  const startY = Math.random()*window.innerHeight * 0.5;
+
+  star.style.left = startX + "px";
+  star.style.top = startY + "px";
+
+  shootingContainer.appendChild(star);
+
+  let x = startX;
+  let y = startY;
+
+  const speed = 8 + Math.random()*4;
+
+  function animate(){
+    x += speed;
+    y += speed * 0.5;
+
+    star.style.left = x + "px";
+    star.style.top = y + "px";
+    star.style.opacity = 1 - (x - startX)/300;
+
+    if(star.style.opacity <= 0){
+      star.remove();
+      return;
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+
+// random timing
+function shootingLoop(){
+  const delay = 4000 + Math.random()*8000;
+  setTimeout(()=>{
+    createShootingStar();
+    shootingLoop();
+  }, delay);
+}
+
+shootingLoop();
 
 </script>
 
