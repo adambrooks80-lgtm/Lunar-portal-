@@ -49,7 +49,7 @@ function getPhase(){
   return (t % 20) / 20;
 }
 
-// ☀️ FAST DAY/NIGHT (1 min cycle)
+// ☀️ FAST DAY/NIGHT (keep for now)
 function getDayFactor(){
   const t = Date.now() / 1000;
   return 0.5 + 0.5 * Math.cos((t % 60) / 60 * Math.PI * 2);
@@ -75,6 +75,24 @@ function drawStars(dayFactor){
   }
 }
 
+// 🌙 FAKE TEXTURE (procedural craters)
+function drawTexture(cx, cy, r){
+  ctx.globalAlpha = 0.08;
+
+  for(let i=0;i<80;i++){
+    const x = cx + (rand() - 0.5) * r * 1.6;
+    const y = cy + (rand() - 0.5) * r * 1.6;
+    const size = rand() * r * 0.08;
+
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI*2);
+    ctx.fillStyle = "black";
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+}
+
 function draw(){
   const w = canvas.width;
   const h = canvas.height;
@@ -85,7 +103,7 @@ function draw(){
 
   const dayFactor = getDayFactor();
 
-  // 🌌 SKY
+  // SKY
   const sky = ctx.createRadialGradient(
     cx, cy, r*0.5,
     cx, cy, Math.max(w,h)
@@ -98,10 +116,10 @@ function draw(){
   ctx.fillStyle = sky;
   ctx.fillRect(0,0,w,h);
 
-  // 🌟 STARS
+  // STARS
   drawStars(dayFactor);
 
-  // 🌙 HALO
+  // HALO
   const haloStrength = 0.06 * (1 - dayFactor * 0.6);
 
   const halo = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r*2.2);
@@ -113,7 +131,7 @@ function draw(){
   ctx.fillStyle = halo;
   ctx.fill();
 
-  // 🌙 MOON
+  // MOON
   ctx.save();
 
   ctx.beginPath();
@@ -134,6 +152,10 @@ function draw(){
   ctx.fillStyle = base;
   ctx.fillRect(cx - r, cy - r, r*2, r*2);
 
+  // 🌙 TEXTURE LAYER
+  drawTexture(cx, cy, r);
+
+  // PHASE
   const phase = getPhase();
 
   ctx.fillStyle = "#121212";
