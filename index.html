@@ -7,6 +7,9 @@
   overflow:hidden;
 ">
 
+<!-- ⭐ STARS -->
+<div id="stars"></div>
+
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -16,21 +19,24 @@
   height:260px;
 ">
 
-  <!-- 🌫️ HALO -->
-  <div style="
+  <!-- 🌫️ HALO (fixed centre + subtle bias) -->
+  <div id="halo" style="
     position:absolute;
-    width:150%;
-    height:150%;
-    top:-25%;
-    left:-25%;
+    width:160%;
+    height:160%;
+    top:-30%;
+    left:-30%;
     border-radius:50%;
+    pointer-events:none;
     background: radial-gradient(
-      circle at 60% 50%,
+      circle at center,
       rgba(255,255,255,0.12),
-      rgba(255,255,255,0.04) 40%,
+      rgba(255,255,255,0.05) 35%,
+      rgba(255,255,255,0.02) 55%,
       transparent 75%
     );
-    filter: blur(20px);
+    filter: blur(25px);
+    opacity:0.9;
   "></div>
 
   <!-- 🌙 BRIGHT MOON -->
@@ -51,7 +57,7 @@
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    opacity:0.12;
+    opacity:0.10;
   "></div>
 
   <!-- 🌗 SOFT TERMINATOR -->
@@ -69,7 +75,7 @@
       border-radius:50%;
       background: radial-gradient(
         circle,
-        rgba(0,0,0,0.9) 55%,
+        rgba(0,0,0,0.92) 55%,
         rgba(0,0,0,0.6) 65%,
         rgba(0,0,0,0.3) 75%,
         rgba(0,0,0,0.1) 85%,
@@ -81,6 +87,19 @@
 
 </div>
 
+<style>
+#stars{
+  position:absolute;
+  width:100%;
+  height:100%;
+}
+.star{
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
+</style>
+
 <script>
 
 // 🌙 PHASE SYSTEM
@@ -91,11 +110,7 @@ const demoCycle = 12000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 const mask = document.getElementById("mask");
-const earthshine = document.getElementById("earthshine");
-
-// 🎛️ EARTHSHINE CONTROL
-const EARTHSHINE_STRENGTH = 0.12;
-earthshine.style.opacity = EARTHSHINE_STRENGTH;
+const halo = document.getElementById("halo");
 
 function updateMoon(){
   const now = Date.now();
@@ -106,12 +121,57 @@ function updateMoon(){
 
   const offset = Math.cos(angle) * 260;
 
+  // 🌗 phase movement
   mask.style.transform = `translateX(${offset}px)`;
+
+  // 🌫️ VERY subtle halo shift (less than before)
+  halo.style.transform = `translateX(${offset * 0.05}px)`;
 
   requestAnimationFrame(updateMoon);
 }
 
 updateMoon();
+
+
+// ⭐ STARS (visible but subtle)
+const starContainer = document.getElementById("stars");
+let stars = [];
+
+function createStars(){
+  for(let i=0;i<90;i++){
+    const s = document.createElement("div");
+
+    const size = Math.random()*1.8 + 0.4;
+
+    s.className = "star";
+    s.style.width = size+"px";
+    s.style.height = size+"px";
+
+    s.x = Math.random()*window.innerWidth;
+    s.y = Math.random()*window.innerHeight;
+
+    s.style.left = s.x+"px";
+    s.style.top = s.y+"px";
+
+    s.style.opacity = Math.random()*0.6 + 0.2;
+
+    stars.push(s);
+    starContainer.appendChild(s);
+  }
+}
+
+createStars();
+
+// ✨ subtle twinkle (magic)
+function twinkle(){
+  for(let s of stars){
+    s.style.opacity += (Math.random()-0.5)*0.02;
+    s.style.opacity = Math.max(0.1, Math.min(0.7, s.style.opacity));
+  }
+  requestAnimationFrame(twinkle);
+}
+
+twinkle();
 
 </script>
 
