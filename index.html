@@ -7,6 +7,7 @@
   height:100vh;
 ">
 
+<!-- 🌙 MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -17,7 +18,7 @@
 ">
 
   <!-- 🌫️ HALO -->
-  <div style="
+  <div id="halo" style="
     position:absolute;
     width:150%;
     height:150%;
@@ -26,58 +27,61 @@
     border-radius:50%;
     background: radial-gradient(
       circle at 60% 50%,
-      rgba(255,255,255,0.12),
-      rgba(255,255,255,0.04) 40%,
+      rgba(255,255,255,0.15),
+      rgba(255,255,255,0.05) 35%,
       transparent 75%
     );
-    filter: blur(25px);
+    filter: blur(20px);
   "></div>
 
-  <!-- 🌙 FULL MOON -->
-  <div id="moon" style="
+  <!-- 🌙 SURFACE -->
+  <div style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    overflow:hidden;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
+  "></div>
+
+  <!-- 🌗 SHADOW (single mask, correct) -->
+  <div id="shadow" style="
+    position:absolute;
+    width:140%;
+    height:140%;
+    top:-20%;
+    left:-20%;
+    border-radius:50%;
+    background:rgba(0,0,0,0.85);
+    filter: blur(3px);
+  "></div>
+
+  <!-- 🌙 faint dark detail -->
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    overflow:hidden;
-  ">
-
-    <!-- 🌑 DARK SIDE -->
-    <div id="darkMask" style="
-      position:absolute;
-      width:100%;
-      height:100%;
-      background:black;
-      opacity:0.85;
-    "></div>
-
-    <!-- 🌗 LIGHT CUT (this creates real phase) -->
-    <div id="lightMask" style="
-      position:absolute;
-      width:100%;
-      height:100%;
-      border-radius:50%;
-      background:black;
-      transform:translateX(0px);
-    "></div>
-
-  </div>
+    opacity:0.1;
+    mix-blend-mode:lighten;
+  "></div>
 
 </div>
 
 <script>
 
-// 🌙 PHASE SYSTEM (TRUE MODEL)
+// 🌙 PHASE SYSTEM (correct + bright)
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 12000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
-const lightMask = document.getElementById("lightMask");
-const darkMask = document.getElementById("darkMask");
+const shadow = document.getElementById("shadow");
+const halo = document.getElementById("halo");
 
 function updateMoon(){
   const now = Date.now();
@@ -86,17 +90,13 @@ function updateMoon(){
   const phase = ((now - newMoon) % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
-  // illumination (0 → 1 → 0)
-  const illum = (1 - Math.cos(angle)) / 2;
-
-  // FULL RANGE movement
+  // FULL TRAVEL (no half-stop)
   const offset = Math.cos(angle) * 260;
 
-  // move light cut fully across
-  lightMask.style.transform = `translateX(${offset}px)`;
+  shadow.style.transform = `translateX(${offset}px)`;
 
-  // control overall darkness
-  darkMask.style.opacity = 0.85;
+  // halo follows light
+  halo.style.transform = `translateX(${offset * 0.1}px)`;
 
   requestAnimationFrame(updateMoon);
 }
