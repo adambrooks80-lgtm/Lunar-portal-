@@ -89,7 +89,7 @@
 
 <script>
 
-// 🌙 PHASE SYSTEM (accurate but corrected brightness)
+// 🌙 PHASE SYSTEM (smooth + accurate)
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
@@ -110,20 +110,19 @@ function updateMoon(){
 
   const illumination = (1 - Math.cos(angle)) / 2;
 
-  const direction = Math.sin(angle) >= 0 ? 1 : -1;
+  // 🔥 FIX: continuous motion (no direction flip)
+  const offset = Math.cos(angle) * 140;
 
-  // correct geometry
-  const offset = direction * (1 - illumination) * 140;
   shadow.style.transform = `translateX(${offset}px)`;
 
-  // FIX: do NOT dim lit side
+  // shadow fades correctly
   shadow.style.opacity = 1 - illumination;
 
-  // subtle dark side detail only
+  // subtle dark side detail
   darkDetail.style.opacity = (1 - illumination) * 0.12;
 
   // halo follows light
-  halo.style.transform = `translateX(${direction * 15}px)`;
+  halo.style.transform = `translateX(${offset * 0.15}px)`;
 
   requestAnimationFrame(updateMoon);
 }
