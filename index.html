@@ -16,16 +16,25 @@
   height:260px;
 ">
 
-  <!-- glow (optional but nice) -->
+  <!-- 🌙 HALO (fixed version) -->
   <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    box-shadow: 0 0 80px 20px rgba(200,200,200,0.1);
+    background: radial-gradient(
+      circle,
+      rgba(255,255,255,0.25) 0%,
+      rgba(255,255,255,0.15) 55%,
+      rgba(255,255,255,0.08) 70%,
+      rgba(255,255,255,0.03) 80%,
+      transparent 100%
+    );
+    transform: scale(1.25);
+    pointer-events:none;
   "></div>
 
-  <!-- 🌙 base texture -->
+  <!-- 🌙 MOON SURFACE -->
   <div id="moonSurface" style="
     position:absolute;
     width:100%;
@@ -36,29 +45,29 @@
     background-size: cover;
   ">
 
-    <!-- 🌗 TERMINATOR (key layer) -->
-    <div id="terminator" style="
+    <!-- 🌗 FULL-DISC LIGHTING -->
+    <div id="lighting" style="
       position:absolute;
-      width:100%;
+      width:200%;
       height:100%;
-      border-radius:50%;
-      background: radial-gradient(
-        circle at 70% 50%,
-        rgba(0,0,0,0.95) 40%,
-        rgba(0,0,0,0.6) 50%,
-        rgba(0,0,0,0.2) 60%,
-        transparent 70%
+      left:-50%;
+      background: linear-gradient(
+        to right,
+        rgba(0,0,0,1) 35%,
+        rgba(0,0,0,0.7) 45%,
+        rgba(0,0,0,0.3) 50%,
+        transparent 60%
       );
       mix-blend-mode: multiply;
     "></div>
 
-    <!-- 🌙 limb darkening -->
+    <!-- 🌙 LIMB DARKENING -->
     <div style="
       position:absolute;
       width:100%;
       height:100%;
       border-radius:50%;
-      background: radial-gradient(circle at center, transparent 70%, rgba(0,0,0,0.5));
+      background: radial-gradient(circle at center, transparent 70%, rgba(0,0,0,0.6));
     "></div>
 
   </div>
@@ -66,14 +75,14 @@
 </div>
 
 <script>
-// 🌙 phase
+// 🌙 phase system
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 10000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
-const terminator = document.getElementById("terminator");
+const lighting = document.getElementById("lighting");
 
 function updateMoon(){
   const now = Date.now();
@@ -81,18 +90,10 @@ function updateMoon(){
 
   const phase = ((now - newMoon) % cycle) / cycle;
 
-  // move curved light boundary
-  const x = 50 + Math.cos(phase * Math.PI * 2) * 40;
+  const shift = Math.cos(phase * Math.PI * 2);
 
-  terminator.style.background = `
-    radial-gradient(
-      circle at ${x}% 50%,
-      rgba(0,0,0,0.95) 40%,
-      rgba(0,0,0,0.6) 50%,
-      rgba(0,0,0,0.2) 60%,
-      transparent 70%
-    )
-  `;
+  // move full-disc light field
+  lighting.style.transform = `translateX(${shift * 80}px)`;
 
   requestAnimationFrame(updateMoon);
 }
