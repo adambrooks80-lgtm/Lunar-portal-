@@ -43,23 +43,18 @@ function createStars(){
 
 resize();
 
-// 🌗 REAL MOON PHASE (fixed)
+// 🌗 REAL PHASE
 function getPhase(){
   const now = Date.now();
-
-  // Known new moon reference
   const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
-
   const days = (now - newMoon) / (1000 * 60 * 60 * 24);
-
   return (days % 29.53) / 29.53;
 }
 
-// ☀️ REAL DAY/NIGHT
+// ☀️ DAY/NIGHT
 function getDayFactor(){
   const now = new Date();
   const hours = now.getHours() + now.getMinutes()/60;
-
   return 0.5 + 0.5 * Math.cos((hours - 12) * Math.PI / 12);
 }
 
@@ -83,7 +78,7 @@ function drawStars(dayFactor){
   }
 }
 
-// 🌙 TEXTURE (soft craters)
+// 🌙 TEXTURE
 function drawTexture(cx, cy, r){
   ctx.globalAlpha = 0.06;
 
@@ -111,7 +106,7 @@ function draw(){
 
   const dayFactor = getDayFactor();
 
-  // 🌌 SKY
+  // SKY
   const sky = ctx.createRadialGradient(
     cx, cy, r*0.5,
     cx, cy, Math.max(w,h)
@@ -124,10 +119,9 @@ function draw(){
   ctx.fillStyle = sky;
   ctx.fillRect(0,0,w,h);
 
-  // 🌟 STARS
   drawStars(dayFactor);
 
-  // 🌙 HALO
+  // HALO
   const haloStrength = 0.05 * (1 - dayFactor * 0.5);
 
   const halo = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r*2.2);
@@ -160,25 +154,26 @@ function draw(){
   ctx.fillStyle = base;
   ctx.fillRect(cx - r, cy - r, r*2, r*2);
 
-  // 🌙 TEXTURE
   drawTexture(cx, cy, r);
 
-  // 🌗 PHASE
+  // 🌗 PHASE — FIXED LIGHT MODEL
   const phase = getPhase();
 
-  ctx.fillStyle = "#121212";
-  ctx.beginPath();
+  const angle = phase * Math.PI * 2;
+  const light = Math.cos(angle);
 
+  ctx.fillStyle = "#121212";
+
+  ctx.beginPath();
   ctx.ellipse(
-    cx + (phase - 0.5) * 2 * r,
+    cx + light * r,
     cy,
     r,
-    r * (0.6 + 0.4 * Math.abs(phase - 0.5)),
+    r,
     0,
     0,
     Math.PI * 2
   );
-
   ctx.fill();
 
   ctx.restore();
