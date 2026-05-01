@@ -19,14 +19,14 @@ let stars = [];
 
 function createStars(){
   stars = [];
-  const count = Math.floor((canvas.width * canvas.height) / 12000); // slightly more
+  const count = Math.floor((canvas.width * canvas.height) / 6000); // more stars
 
   for(let i=0;i<count;i++){
     stars.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: 0.5 + Math.random() * 1.5,
-      speed: 0.02 + Math.random() * 0.04
+      size: 1 + Math.random() * 2, // larger
+      speed: 0.03 + Math.random() * 0.05
     });
   }
 }
@@ -41,13 +41,13 @@ function getPhase(){
 function drawStars(){
   for(let s of stars){
 
-    // slightly brighter but still subtle
-    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    // brighter for visibility
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fill();
 
-    // gentle drift
+    // drift
     s.x += s.speed;
     if(s.x > canvas.width) s.x = 0;
   }
