@@ -8,7 +8,6 @@
   justify-content:center;
   height:100vh;
   overflow:hidden;
-  font-family:sans-serif;
 ">
 
 <!-- ⭐ STARS -->
@@ -27,19 +26,20 @@
     width:100%;
     height:100%;
     border-radius:50%;
-    box-shadow: 0 0 80px 20px rgba(200,200,200,0.15);
+    box-shadow: 0 0 100px 30px rgba(200,200,200,0.12);
   "></div>
 
-  <!-- moon surface -->
-  <div style="
+  <!-- moon base -->
+  <div id="moonSurface" style="
     position:absolute;
     width:100%;
     height:100%;
-    background: radial-gradient(circle at 30% 30%, #eeeeee, #bbbbbb 60%, #777777);
     border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #eeeeee, #bbbbbb 60%, #666666);
+    overflow:hidden;
   "></div>
 
-  <!-- shadow -->
+  <!-- 🌗 shadow -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
@@ -53,7 +53,7 @@
 
 <script>
 // --------------------
-// 🌙 MOON PHASE
+// 🌙 PHASE
 // --------------------
 let demo = true;
 
@@ -77,46 +77,84 @@ function updateMoon(){
 updateMoon();
 
 // --------------------
+// 🌙 TEXTURE (craters)
+// --------------------
+const surface = document.getElementById("moonSurface");
+
+function addCraters(){
+  for(let i=0;i<40;i++){
+    const crater = document.createElement("div");
+
+    const size = Math.random() * 30 + 10;
+
+    crater.style.position = "absolute";
+    crater.style.width = size + "px";
+    crater.style.height = size + "px";
+    crater.style.borderRadius = "50%";
+
+    crater.style.left = Math.random()*220 + "px";
+    crater.style.top = Math.random()*220 + "px";
+
+    crater.style.background = "radial-gradient(circle, rgba(0,0,0,0.2), transparent)";
+    crater.style.opacity = 0.3;
+
+    surface.appendChild(crater);
+  }
+}
+
+addCraters();
+
+// --------------------
 // ⭐ STARS
 // --------------------
 const starContainer = document.getElementById("stars");
 
+let stars = [];
+
 function createStars(){
-  for(let i = 0; i < 120; i++){
+  for(let i=0;i<120;i++){
     const star = document.createElement("div");
 
-    const size = Math.random() * 2 + 1;
+    const size = Math.random()*2+1;
 
     star.style.position = "absolute";
-    star.style.width = size + "px";
-    star.style.height = size + "px";
+    star.style.width = size+"px";
+    star.style.height = size+"px";
     star.style.background = "white";
     star.style.borderRadius = "50%";
 
-    star.style.left = Math.random() * window.innerWidth + "px";
-    star.style.top = Math.random() * window.innerHeight + "px";
+    star.x = Math.random()*window.innerWidth;
+    star.y = Math.random()*window.innerHeight;
 
-    star.style.opacity = Math.random() * 0.5 + 0.3;
+    star.style.left = star.x + "px";
+    star.style.top = star.y + "px";
 
-    // subtle twinkle
-    star.animate(
-      [
-        { opacity: star.style.opacity },
-        { opacity: Math.random() * 0.2 }
-      ],
-      {
-        duration: 2000 + Math.random() * 3000,
-        iterations: Infinity,
-        direction: "alternate",
-        easing: "ease-in-out"
-      }
-    );
+    star.style.opacity = Math.random()*0.5 + 0.3;
 
+    stars.push(star);
     starContainer.appendChild(star);
   }
 }
 
 createStars();
+
+// slow drift
+function updateStars(){
+  for(let s of stars){
+    s.x += 0.02;
+
+    if(s.x > window.innerWidth){
+      s.x = 0;
+      s.y = Math.random()*window.innerHeight;
+    }
+
+    s.style.left = s.x + "px";
+  }
+
+  requestAnimationFrame(updateStars);
+}
+
+updateStars();
 </script>
 
 </body>
