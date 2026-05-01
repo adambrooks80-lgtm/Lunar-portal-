@@ -15,12 +15,12 @@
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%,-50%);
+  transform:translate(-50%,-50%) rotate(20deg);
   width:260px;
   height:260px;
 ">
 
-  <!-- 🌫️ REALISTIC HALO -->
+  <!-- 🌫️ HALO -->
   <div id="halo" style="
     position:absolute;
     width:140%;
@@ -51,7 +51,7 @@
     background-size:cover;
   "></div>
 
-  <!-- 🌗 TRUE SHADOW -->
+  <!-- 🌗 SHADOW -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
@@ -62,7 +62,7 @@
     transform:translateX(80px);
   "></div>
 
-  <!-- 🌙 faint detail in dark side -->
+  <!-- 🌙 faint dark-side texture -->
   <div style="
     position:absolute;
     width:100%;
@@ -111,10 +111,10 @@ function updateMoon(){
 
   const offset = Math.cos(phase * Math.PI * 2);
 
-  // 🌗 shadow movement (correct geometry)
+  // 🌗 correct crescent motion
   shadow.style.transform = `translateX(${offset * 130}px)`;
 
-  // 🌫️ halo follows light slightly
+  // 🌫️ halo subtly follows light
   halo.style.transform = `translateX(${offset * 20}px)`;
 
   requestAnimationFrame(updateMoon);
@@ -128,7 +128,7 @@ const starContainer = document.getElementById("stars");
 let stars = [];
 
 function createStars(){
-  for(let i=0;i<70;i++){   // subtle amount
+  for(let i=0;i<70;i++){
     const s = document.createElement("div");
 
     const size = Math.random()*1.6 + 0.3;
