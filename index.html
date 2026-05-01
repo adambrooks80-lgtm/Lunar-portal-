@@ -16,7 +16,7 @@
   height:260px;
 ">
 
-  <!-- 🌫️ halo -->
+  <!-- 🌫️ HALO -->
   <div style="
     position:absolute;
     width:150%;
@@ -33,7 +33,7 @@
     filter: blur(20px);
   "></div>
 
-  <!-- 🌙 FULL BRIGHT MOON -->
+  <!-- 🌙 BRIGHT MOON -->
   <div style="
     position:absolute;
     width:100%;
@@ -43,8 +43,8 @@
     background-size:cover;
   "></div>
 
-  <!-- 🌑 EARTHSHINE (faint full disc) -->
-  <div style="
+  <!-- 🌑 EARTHSHINE -->
+  <div id="earthshine" style="
     position:absolute;
     width:100%;
     height:100%;
@@ -54,8 +54,8 @@
     opacity:0.12;
   "></div>
 
-  <!-- 🌗 PHASE CUT -->
-  <div id="maskWrap" style="
+  <!-- 🌗 SOFT TERMINATOR -->
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
@@ -67,8 +67,15 @@
       width:100%;
       height:100%;
       border-radius:50%;
-      background:black;
-      opacity:0.85;
+      background: radial-gradient(
+        circle,
+        rgba(0,0,0,0.9) 55%,
+        rgba(0,0,0,0.6) 65%,
+        rgba(0,0,0,0.3) 75%,
+        rgba(0,0,0,0.1) 85%,
+        transparent 100%
+      );
+      filter: blur(3px);
     "></div>
   </div>
 
@@ -76,7 +83,7 @@
 
 <script>
 
-// 🌙 phase system (correct geometry)
+// 🌙 PHASE SYSTEM
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
@@ -84,13 +91,17 @@ const demoCycle = 12000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 const mask = document.getElementById("mask");
+const earthshine = document.getElementById("earthshine");
+
+// 🎛️ EARTHSHINE CONTROL
+const EARTHSHINE_STRENGTH = 0.12;
+earthshine.style.opacity = EARTHSHINE_STRENGTH;
 
 function updateMoon(){
   const now = Date.now();
   const cycle = demo ? demoCycle : realCycle;
 
   const phase = ((now - newMoon) % cycle) / cycle;
-
   const angle = phase * Math.PI * 2;
 
   const offset = Math.cos(angle) * 260;
