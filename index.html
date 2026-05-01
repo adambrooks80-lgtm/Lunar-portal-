@@ -21,7 +21,7 @@ function resize(){
 }
 window.addEventListener("resize", resize);
 
-// 🌟 STAR FIELD (balanced)
+// 🌟 STAR FIELD (final tuned)
 let stars = [];
 
 function createStars(){
@@ -35,7 +35,8 @@ function createStars(){
       x: rand() * canvas.width,
       y: rand() * canvas.height,
       size: 0.6 + rand() * 1.2,
-      speed: 0.01 + rand() * 0.02
+      speedX: 0.015 + rand() * 0.01,
+      speedY: (rand() - 0.5) * 0.01 // tiny vertical drift
     });
   }
 }
@@ -55,8 +56,15 @@ function drawStars(){
     ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fill();
 
-    s.x += s.speed;
+    // subtle drift
+    s.x += s.speedX;
+    s.y += s.speedY;
+
+    // wrap around edges
     if(s.x > canvas.width) s.x = 0;
+    if(s.x < 0) s.x = canvas.width;
+    if(s.y > canvas.height) s.y = 0;
+    if(s.y < 0) s.y = canvas.height;
   }
 }
 
