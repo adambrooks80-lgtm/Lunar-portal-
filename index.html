@@ -16,17 +16,17 @@
   height:260px;
 ">
 
-  <!-- glow -->
+  <!-- glow (optional but nice) -->
   <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    box-shadow: 0 0 100px 30px rgba(200,200,200,0.12);
+    box-shadow: 0 0 80px 20px rgba(200,200,200,0.1);
   "></div>
 
-  <!-- 🌙 base moon -->
-  <div style="
+  <!-- 🌙 base texture -->
+  <div id="moonSurface" style="
     position:absolute;
     width:100%;
     height:100%;
@@ -34,30 +34,34 @@
     overflow:hidden;
     background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size: cover;
-  "></div>
+  ">
 
-  <!-- 🌗 shadow shape -->
-  <div id="shadow" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background: rgba(0,0,0,0.85);
-    transform:translateX(80px);
-    filter: blur(6px); /* 👈 key softness */
-  "></div>
+    <!-- 🌗 TERMINATOR (key layer) -->
+    <div id="terminator" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background: radial-gradient(
+        circle at 70% 50%,
+        rgba(0,0,0,0.95) 40%,
+        rgba(0,0,0,0.6) 50%,
+        rgba(0,0,0,0.2) 60%,
+        transparent 70%
+      );
+      mix-blend-mode: multiply;
+    "></div>
 
-  <!-- 🌙 shadow detail (faint texture in dark side) -->
-  <div id="darkTexture" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size: cover;
-    opacity:0.15;
-    mix-blend-mode: lighten;
-  "></div>
+    <!-- 🌙 limb darkening -->
+    <div style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background: radial-gradient(circle at center, transparent 70%, rgba(0,0,0,0.5));
+    "></div>
+
+  </div>
 
 </div>
 
@@ -69,7 +73,7 @@ const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 10000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
-const shadow = document.getElementById("shadow");
+const terminator = document.getElementById("terminator");
 
 function updateMoon(){
   const now = Date.now();
@@ -77,9 +81,18 @@ function updateMoon(){
 
   const phase = ((now - newMoon) % cycle) / cycle;
 
-  const offset = Math.cos(phase * Math.PI * 2);
+  // move curved light boundary
+  const x = 50 + Math.cos(phase * Math.PI * 2) * 40;
 
-  shadow.style.transform = `translateX(${offset * 130}px)`;
+  terminator.style.background = `
+    radial-gradient(
+      circle at ${x}% 50%,
+      rgba(0,0,0,0.95) 40%,
+      rgba(0,0,0,0.6) 50%,
+      rgba(0,0,0,0.2) 60%,
+      transparent 70%
+    )
+  `;
 
   requestAnimationFrame(updateMoon);
 }
