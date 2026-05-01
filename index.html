@@ -15,7 +15,7 @@
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%,-50%) rotate(12deg);
+  transform:translate(-50%,-50%);
   width:260px;
   height:260px;
 ">
@@ -23,20 +23,18 @@
   <!-- 🌫️ HALO -->
   <div id="halo" style="
     position:absolute;
-    width:140%;
-    height:140%;
-    top:-20%;
-    left:-20%;
+    width:150%;
+    height:150%;
+    top:-25%;
+    left:-25%;
     border-radius:50%;
-    pointer-events:none;
     background: radial-gradient(
-      circle at 65% 50%,
-      rgba(255,255,255,0.15) 0%,
+      circle at 60% 50%,
+      rgba(255,255,255,0.15),
       rgba(255,255,255,0.05) 30%,
-      rgba(255,255,255,0.02) 55%,
-      transparent 80%
+      transparent 70%
     );
-    filter: blur(20px);
+    filter: blur(25px);
   "></div>
 
   <!-- 🌙 SURFACE -->
@@ -50,17 +48,19 @@
     background-size:cover;
   "></div>
 
-  <!-- 🌗 TRUE SHADOW -->
+  <!-- 🌗 SHADOW (bigger now) -->
   <div id="shadow" style="
     position:absolute;
-    width:100%;
-    height:100%;
+    width:120%;
+    height:120%;
+    top:-10%;
+    left:-10%;
     border-radius:50%;
     background:rgba(0,0,0,0.9);
-    filter: blur(3px);
+    filter:blur(3px);
   "></div>
 
-  <!-- 🌙 faint dark-side detail -->
+  <!-- 🌙 faint dark detail -->
   <div style="
     position:absolute;
     width:100%;
@@ -89,7 +89,7 @@
 
 <script>
 
-// 🌙 PHASE SYSTEM (pure geometry)
+// 🌙 PHASE SYSTEM (final geometry)
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
@@ -98,21 +98,27 @@ const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 const shadow = document.getElementById("shadow");
 const halo = document.getElementById("halo");
+const moonWrap = document.getElementById("moonWrap");
 
 function updateMoon(){
   const now = Date.now();
   const cycle = demo ? demoCycle : realCycle;
 
   const phase = ((now - newMoon) % cycle) / cycle;
-
   const angle = phase * Math.PI * 2;
 
-  // 🔥 TRUE full range motion
-  const offset = Math.cos(angle) * 150;
+  // 🌗 FULL TRAVEL FIX
+  const offset = Math.cos(angle) * 180;
 
   shadow.style.transform = `translateX(${offset}px)`;
 
-  // halo follows light direction slightly
+  // 🌍 ROTATION (this makes it realistic)
+  const tilt = Math.sin(angle) * 15;
+  moonWrap.style.transform = `
+    translate(-50%,-50%) rotate(${tilt}deg)
+  `;
+
+  // halo follows light
   halo.style.transform = `translateX(${offset * 0.15}px)`;
 
   requestAnimationFrame(updateMoon);
