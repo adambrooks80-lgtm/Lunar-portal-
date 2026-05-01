@@ -7,21 +7,17 @@
   height:100vh;
 ">
 
-<!-- ⭐ STARS -->
-<div id="stars"></div>
-
-<!-- 🌙 MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%,-50%);
+  transform:translate(-50%,-50%) rotate(12deg);
   width:260px;
   height:260px;
 ">
 
   <!-- 🌫️ HALO -->
-  <div id="halo" style="
+  <div style="
     position:absolute;
     width:150%;
     height:150%;
@@ -30,75 +26,58 @@
     border-radius:50%;
     background: radial-gradient(
       circle at 60% 50%,
-      rgba(255,255,255,0.15),
-      rgba(255,255,255,0.05) 30%,
-      transparent 70%
+      rgba(255,255,255,0.12),
+      rgba(255,255,255,0.04) 40%,
+      transparent 75%
     );
     filter: blur(25px);
   "></div>
 
-  <!-- 🌙 SURFACE -->
-  <div style="
+  <!-- 🌙 FULL MOON -->
+  <div id="moon" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
     overflow:hidden;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-  "></div>
+  ">
 
-  <!-- 🌗 SHADOW (bigger now) -->
-  <div id="shadow" style="
-    position:absolute;
-    width:120%;
-    height:120%;
-    top:-10%;
-    left:-10%;
-    border-radius:50%;
-    background:rgba(0,0,0,0.9);
-    filter:blur(3px);
-  "></div>
+    <!-- 🌑 DARK SIDE -->
+    <div id="darkMask" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      background:black;
+      opacity:0.85;
+    "></div>
 
-  <!-- 🌙 faint dark detail -->
-  <div style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-    opacity:0.08;
-    mix-blend-mode:lighten;
-  "></div>
+    <!-- 🌗 LIGHT CUT (this creates real phase) -->
+    <div id="lightMask" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background:black;
+      transform:translateX(0px);
+    "></div>
+
+  </div>
 
 </div>
 
-<style>
-#stars{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
-.star{
-  position:absolute;
-  background:white;
-  border-radius:50%;
-}
-</style>
-
 <script>
 
-// 🌙 PHASE SYSTEM (final geometry)
+// 🌙 PHASE SYSTEM (TRUE MODEL)
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 12000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
-const shadow = document.getElementById("shadow");
-const halo = document.getElementById("halo");
-const moonWrap = document.getElementById("moonWrap");
+const lightMask = document.getElementById("lightMask");
+const darkMask = document.getElementById("darkMask");
 
 function updateMoon(){
   const now = Date.now();
@@ -107,68 +86,22 @@ function updateMoon(){
   const phase = ((now - newMoon) % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
-  // 🌗 FULL TRAVEL FIX
-  const offset = Math.cos(angle) * 180;
+  // illumination (0 → 1 → 0)
+  const illum = (1 - Math.cos(angle)) / 2;
 
-  shadow.style.transform = `translateX(${offset}px)`;
+  // FULL RANGE movement
+  const offset = Math.cos(angle) * 260;
 
-  // 🌍 ROTATION (this makes it realistic)
-  const tilt = Math.sin(angle) * 15;
-  moonWrap.style.transform = `
-    translate(-50%,-50%) rotate(${tilt}deg)
-  `;
+  // move light cut fully across
+  lightMask.style.transform = `translateX(${offset}px)`;
 
-  // halo follows light
-  halo.style.transform = `translateX(${offset * 0.15}px)`;
+  // control overall darkness
+  darkMask.style.opacity = 0.85;
 
   requestAnimationFrame(updateMoon);
 }
 
 updateMoon();
-
-
-// ⭐ STARS
-const starContainer = document.getElementById("stars");
-let stars = [];
-
-function createStars(){
-  for(let i=0;i<70;i++){
-    const s = document.createElement("div");
-
-    const size = Math.random()*1.6 + 0.3;
-
-    s.className = "star";
-    s.style.width = size+"px";
-    s.style.height = size+"px";
-
-    s.x = Math.random()*window.innerWidth;
-    s.y = Math.random()*window.innerHeight;
-
-    s.style.left = s.x+"px";
-    s.style.top = s.y+"px";
-
-    s.style.opacity = Math.random()*0.4 + 0.1;
-
-    stars.push(s);
-    starContainer.appendChild(s);
-  }
-}
-
-createStars();
-
-function updateStars(){
-  for(let s of stars){
-    s.x += 0.01;
-    if(s.x > window.innerWidth){
-      s.x = 0;
-      s.y = Math.random()*window.innerHeight;
-    }
-    s.style.left = s.x+"px";
-  }
-  requestAnimationFrame(updateStars);
-}
-
-updateStars();
 
 </script>
 
