@@ -1,55 +1,36 @@
 <!DOCTYPE html>
 <html>
-<body style="margin:0;background:black;">
-<canvas id="c"></canvas>
+<body style="
+  margin:0;
+  background:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+">
 
-<script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
+<div style="position:relative; width:240px; height:240px;">
 
-function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
+  <!-- 🌙 Full moon -->
+  <div style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:#dddddd;
+    border-radius:50%;
+  "></div>
 
-// try 0 → 1
-const phase = 0.25;
+  <!-- 🌗 Shadow -->
+  <div style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:black;
+    border-radius:50%;
+    transform:translateX(80px); /* adjust for phase */
+  "></div>
 
-function draw(){
-  const w = canvas.width;
-  const h = canvas.height;
+</div>
 
-  const cx = w/2;
-  const cy = h/2;
-  const r = 120;
-
-  ctx.fillStyle = "black";
-  ctx.fillRect(0,0,w,h);
-
-  // 🌙 STEP 1: clip to moon circle
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI*2);
-  ctx.clip();
-
-  // 🌙 STEP 2: draw bright moon
-  ctx.fillStyle = "#dddddd";
-  ctx.fillRect(cx - r, cy - r, r*2, r*2);
-
-  // 🌗 STEP 3: cut shadow by overdrawing background
-  const offset = Math.cos(phase * Math.PI * 2) * r;
-
-  ctx.fillStyle = "black";
-  ctx.beginPath();
-  ctx.arc(cx + offset, cy, r, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.restore();
-}
-
-draw();
-</script>
 </body>
 </html>
