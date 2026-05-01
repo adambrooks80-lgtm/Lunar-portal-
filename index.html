@@ -29,7 +29,7 @@
     box-shadow: 0 0 100px 30px rgba(200,200,200,0.12);
   "></div>
 
-  <!-- 🌙 REAL MOON TEXTURE -->
+  <!-- 🌙 texture -->
   <div id="moonSurface" style="
     position:absolute;
     width:100%;
@@ -38,63 +38,79 @@
     overflow:hidden;
     background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size: cover;
-    background-position: center;
     filter: brightness(1.05) contrast(1.1);
   ">
 
-    <!-- subtle lighting overlay -->
+    <!-- 🌗 directional lighting -->
+    <div id="lighting" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), rgba(0,0,0,0.5));
+      mix-blend-mode: overlay;
+    "></div>
+
+    <!-- 🌙 limb darkening (THIS adds roundness) -->
     <div style="
       position:absolute;
       width:100%;
       height:100%;
       border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 60%);
+      background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.6));
+      opacity:0.7;
     "></div>
 
   </div>
 
-  <!-- 🌗 SHADOW -->
-  <div id="shadow" style="
+  <!-- 🌗 terminator -->
+  <div id="terminator" style="
     position:absolute;
     width:100%;
     height:100%;
-    background:black;
     border-radius:50%;
+    background: radial-gradient(circle at center, transparent 55%, black 85%);
+    opacity:0.7;
     transform:translateX(80px);
   "></div>
 
 </div>
 
 <script>
-// --------------------
-// 🌙 MOON PHASE
-// --------------------
+// 🌙 phase
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 10000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
-const shadow = document.getElementById("shadow");
+const terminator = document.getElementById("terminator");
+const lighting = document.getElementById("lighting");
 
 function updateMoon(){
   const now = Date.now();
   const cycle = demo ? demoCycle : realCycle;
 
   const phase = ((now - newMoon) % cycle) / cycle;
+
   const offset = Math.cos(phase * Math.PI * 2);
 
-  shadow.style.transform = `translateX(${offset * 130}px)`;
+  // move shadow
+  terminator.style.transform = `translateX(${offset * 130}px)`;
+
+  // move light direction (THIS is subtle but powerful)
+  const lightX = 50 + offset * 30;
+  lighting.style.background = `
+    radial-gradient(circle at ${lightX}% 30%, rgba(255,255,255,0.25), rgba(0,0,0,0.5))
+  `;
 
   requestAnimationFrame(updateMoon);
 }
+
 updateMoon();
 
-// --------------------
-// ⭐ STARS
-// --------------------
+// ⭐ stars
 const starContainer = document.getElementById("stars");
-
 let stars = [];
 
 function createStars(){
@@ -124,7 +140,6 @@ function createStars(){
 
 createStars();
 
-// slow drift
 function updateStars(){
   for(let s of stars){
     s.x += 0.02;
