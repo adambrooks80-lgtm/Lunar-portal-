@@ -7,18 +7,21 @@
   align-items:center;
   justify-content:center;
   height:100vh;
-  flex-direction:column;
-  color:white;
+  overflow:hidden;
   font-family:sans-serif;
 ">
 
+<!-- ⭐ STARS -->
+<div id="stars"></div>
+
+<!-- 🌙 MOON -->
 <div id="moonWrap" style="
   position:relative;
   width:260px;
   height:260px;
 ">
 
-  <!-- 🌙 glow -->
+  <!-- glow -->
   <div style="
     position:absolute;
     width:100%;
@@ -27,7 +30,7 @@
     box-shadow: 0 0 80px 20px rgba(200,200,200,0.15);
   "></div>
 
-  <!-- 🌙 full moon -->
+  <!-- moon surface -->
   <div style="
     position:absolute;
     width:100%;
@@ -36,7 +39,7 @@
     border-radius:50%;
   "></div>
 
-  <!-- 🌗 shadow -->
+  <!-- shadow -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
@@ -48,42 +51,72 @@
 
 </div>
 
-<button id="toggle" style="margin-top:20px;padding:10px 20px;">
-  Toggle Demo Speed
-</button>
-
 <script>
+// --------------------
+// 🌙 MOON PHASE
+// --------------------
 let demo = true;
 
-const shadow = document.getElementById("shadow");
-const btn = document.getElementById("toggle");
-
-btn.onclick = () => {
-  demo = !demo;
-  btn.innerText = demo ? "Switch to Real Time" : "Switch to Demo";
-};
-
-// real vs demo
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 10000;
-
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
+
+const shadow = document.getElementById("shadow");
 
 function updateMoon(){
   const now = Date.now();
   const cycle = demo ? demoCycle : realCycle;
 
   const phase = ((now - newMoon) % cycle) / cycle;
-
   const offset = Math.cos(phase * Math.PI * 2);
-  const px = offset * 130;
 
-  shadow.style.transform = `translateX(${px}px)`;
+  shadow.style.transform = `translateX(${offset * 130}px)`;
 
   requestAnimationFrame(updateMoon);
 }
-
 updateMoon();
+
+// --------------------
+// ⭐ STARS
+// --------------------
+const starContainer = document.getElementById("stars");
+
+function createStars(){
+  for(let i = 0; i < 120; i++){
+    const star = document.createElement("div");
+
+    const size = Math.random() * 2 + 1;
+
+    star.style.position = "absolute";
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+    star.style.background = "white";
+    star.style.borderRadius = "50%";
+
+    star.style.left = Math.random() * window.innerWidth + "px";
+    star.style.top = Math.random() * window.innerHeight + "px";
+
+    star.style.opacity = Math.random() * 0.5 + 0.3;
+
+    // subtle twinkle
+    star.animate(
+      [
+        { opacity: star.style.opacity },
+        { opacity: Math.random() * 0.2 }
+      ],
+      {
+        duration: 2000 + Math.random() * 3000,
+        iterations: Infinity,
+        direction: "alternate",
+        easing: "ease-in-out"
+      }
+    );
+
+    starContainer.appendChild(star);
+  }
+}
+
+createStars();
 </script>
 
 </body>
