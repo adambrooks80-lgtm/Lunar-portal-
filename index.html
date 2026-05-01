@@ -14,38 +14,39 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-// try values 0 → 1
+// try 0 → 1
 const phase = 0.25;
 
 function draw(){
   const w = canvas.width;
   const h = canvas.height;
 
-  const cx = w / 2;
-  const cy = h / 2;
+  const cx = w/2;
+  const cy = h/2;
   const r = 120;
 
   ctx.fillStyle = "black";
   ctx.fillRect(0,0,w,h);
 
-  // convert phase to -1 → 1
-  const t = Math.cos(phase * Math.PI * 2);
-
-  // offset controls width
-  const offset = t * r * 0.9;
-
+  // 🌙 STEP 1: clip to moon circle
+  ctx.save();
   ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.clip();
 
-  // outer curve (perfect circle)
-  ctx.arc(cx, cy, r, Math.PI/2, Math.PI*1.5);
-
-  // inner curve (slightly adjusted radius fixes flattening)
-  ctx.arc(cx + offset, cy, r * 0.98, Math.PI*1.5, Math.PI/2, true);
-
-  ctx.closePath();
-
+  // 🌙 STEP 2: draw bright moon
   ctx.fillStyle = "#dddddd";
+  ctx.fillRect(cx - r, cy - r, r*2, r*2);
+
+  // 🌗 STEP 3: cut shadow by overdrawing background
+  const offset = Math.cos(phase * Math.PI * 2) * r;
+
+  ctx.fillStyle = "black";
+  ctx.beginPath();
+  ctx.arc(cx + offset, cy, r, 0, Math.PI*2);
   ctx.fill();
+
+  ctx.restore();
 }
 
 draw();
