@@ -14,33 +14,32 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-// phase (0 = new, 0.5 = half, 1 = full cycle)
+// tweak this between 0.1 → 0.9
 const phase = 0.25;
 
 function draw(){
   const w = canvas.width;
   const h = canvas.height;
 
-  const cx = w / 2;
-  const cy = h / 2;
-  const r = 140;
+  const cx = w/2;
+  const cy = h/2;
+  const r = 120;
 
   ctx.fillStyle = "black";
   ctx.fillRect(0,0,w,h);
 
-  // 🌗 convert phase to offset (-1 to 1)
-  const t = Math.cos(phase * Math.PI * 2);
-
-  // control shape width
-  const offset = t * r * 0.8;
+  // control width of crescent safely
+  const offset = (phase - 0.5) * r * 1.5;
 
   ctx.beginPath();
 
-  // left side
+  // main arc
   ctx.arc(cx, cy, r, Math.PI/2, Math.PI*1.5);
 
-  // right side (different offset = better shape)
+  // inner arc (reverse direction)
   ctx.arc(cx + offset, cy, r, Math.PI*1.5, Math.PI/2, true);
+
+  ctx.closePath();
 
   ctx.fillStyle = "#dddddd";
   ctx.fill();
