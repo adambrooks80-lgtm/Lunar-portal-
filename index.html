@@ -14,26 +14,39 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-const cx = canvas.width / 2;
-const cy = canvas.height / 2;
-const r = 120;
+// phase (0 = new, 0.5 = half, 1 = full cycle)
+const phase = 0.25;
 
-// draw background
-ctx.fillStyle = "black";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+function draw(){
+  const w = canvas.width;
+  const h = canvas.height;
 
-// 🌙 Draw crescent as ONE path
-ctx.beginPath();
+  const cx = w / 2;
+  const cy = h / 2;
+  const r = 140;
 
-// left arc (main moon)
-ctx.arc(cx, cy, r, Math.PI/2, Math.PI*1.5);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0,0,w,h);
 
-// right arc (cut curve)
-ctx.arc(cx + 60, cy, r, Math.PI*1.5, Math.PI/2, true);
+  // 🌗 convert phase to offset (-1 to 1)
+  const t = Math.cos(phase * Math.PI * 2);
 
-// fill
-ctx.fillStyle = "yellow";
-ctx.fill();
+  // control shape width
+  const offset = t * r * 0.8;
+
+  ctx.beginPath();
+
+  // left side
+  ctx.arc(cx, cy, r, Math.PI/2, Math.PI*1.5);
+
+  // right side (different offset = better shape)
+  ctx.arc(cx + offset, cy, r, Math.PI*1.5, Math.PI/2, true);
+
+  ctx.fillStyle = "#dddddd";
+  ctx.fill();
+}
+
+draw();
 </script>
 </body>
 </html>
