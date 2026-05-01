@@ -9,9 +9,9 @@
   height:100vh;
 ">
 
-<div style="position:relative; width:240px; height:240px;">
+<div id="moon" style="position:relative; width:240px; height:240px;">
 
-  <!-- 🌙 Full moon -->
+  <!-- full moon -->
   <div style="
     position:absolute;
     width:100%;
@@ -20,17 +20,44 @@
     border-radius:50%;
   "></div>
 
-  <!-- 🌗 Shadow -->
-  <div style="
+  <!-- shadow -->
+  <div id="shadow" style="
     position:absolute;
     width:100%;
     height:100%;
     background:black;
     border-radius:50%;
-    transform:translateX(80px); /* adjust for phase */
+    transform:translateX(80px);
   "></div>
 
 </div>
+
+<script>
+// 🌗 real lunar cycle ≈ 29.53 days
+const cycle = 29.53 * 24 * 60 * 60 * 1000;
+
+// reference new moon (fixed point)
+const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
+
+const shadow = document.getElementById("shadow");
+
+function updateMoon(){
+  const now = Date.now();
+  const phase = ((now - newMoon) % cycle) / cycle;
+
+  // convert phase → position
+  const offset = Math.cos(phase * Math.PI * 2);
+
+  // scale to pixels
+  const px = offset * 120;
+
+  shadow.style.transform = `translateX(${px}px)`;
+
+  requestAnimationFrame(updateMoon);
+}
+
+updateMoon();
+</script>
 
 </body>
 </html>
