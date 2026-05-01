@@ -10,13 +10,46 @@ const ctx = canvas.getContext("2d");
 function resize(){
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  createStars();
 }
-resize();
 window.addEventListener("resize", resize);
+
+// 🌟 STAR FIELD
+let stars = [];
+
+function createStars(){
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 20000); // sparse
+
+  for(let i=0;i<count;i++){
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 1.2,
+      speed: 0.02 + Math.random() * 0.03
+    });
+  }
+}
+
+resize();
 
 function getPhase(){
   const t = Date.now() / 1000;
   return (t % 20) / 20;
+}
+
+function drawStars(){
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+
+  for(let s of stars){
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+    ctx.fill();
+
+    // slow drift
+    s.x += s.speed;
+    if(s.x > canvas.width) s.x = 0;
+  }
 }
 
 function draw(){
@@ -27,17 +60,19 @@ function draw(){
   const cy = h/2;
   const r = Math.min(w,h)*0.2;
 
-  // 🌌 SKY (subtle depth)
+  // 🌌 SKY
   const sky = ctx.createRadialGradient(
     cx, cy, r*0.5,
     cx, cy, Math.max(w,h)
   );
-
   sky.addColorStop(0, "#1a1a1a");
   sky.addColorStop(1, "#0f0f0f");
 
   ctx.fillStyle = sky;
   ctx.fillRect(0,0,w,h);
+
+  // 🌟 STARS
+  drawStars();
 
   // 🌙 HALO
   const halo = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r*2.2);
@@ -49,7 +84,7 @@ function draw(){
   ctx.fillStyle = halo;
   ctx.fill();
 
-  // 🌙 BASE MOON
+  // 🌙 MOON
   const base = ctx.createRadialGradient(
     cx - r*0.35, cy - r*0.35, r*0.2,
     cx, cy, r
@@ -81,7 +116,6 @@ function draw(){
 
   ctx.fill();
 
-  // clip to circle
   ctx.globalCompositeOperation = "destination-in";
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI*2);
