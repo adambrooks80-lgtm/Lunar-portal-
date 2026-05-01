@@ -14,7 +14,6 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-// 🌗 phase (we’ll animate slowly)
 let phase = 0.25;
 
 function draw(){
@@ -23,14 +22,19 @@ function draw(){
 
   const cx = w/2;
   const cy = h/2;
-  const r = Math.min(w,h)*0.18;
+  const r = 120;
+
+  // HARD reset canvas (important)
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
 
   // background
   ctx.fillStyle = "#2a2a2a";
   ctx.fillRect(0,0,w,h);
 
-  // moon
-  ctx.fillStyle = "#bbbbbb";
+  // moon (very bright to guarantee visibility)
+  ctx.fillStyle = "#ffffff";
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI*2);
   ctx.fill();
