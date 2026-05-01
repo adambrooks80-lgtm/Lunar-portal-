@@ -51,15 +51,15 @@ function createStars(){
 resize();
 
 // --------------------
-// 🌗 Stable moon phase (updates once/min)
+// 🌗 Phase (locked update)
 // --------------------
-let cachedPhase = 0;
+let cachedPhase = 0.25; // default visible phase
 let lastUpdate = 0;
 
 function getPhase(){
   const now = Date.now();
 
-  if(now - lastUpdate > 60000){
+  if(now - lastUpdate > 60000){ // update once per minute
     const newMoon = new Date("2000-01-06T18:14:00Z");
     const diff = (new Date() - newMoon) / (1000 * 60 * 60 * 24);
     cachedPhase = (diff % 29.53) / 29.53;
@@ -79,7 +79,7 @@ function getDayFactor(){
 }
 
 // --------------------
-// Draw stars
+// Draw Stars
 // --------------------
 function drawStars(dayFactor){
   const opacity = 0.32 * (1 - dayFactor);
@@ -121,7 +121,7 @@ function drawTexture(cx, cy, r){
 }
 
 // --------------------
-// Draw
+// Draw Scene
 // --------------------
 function draw(){
   const w = canvas.width;
@@ -184,9 +184,11 @@ function draw(){
 
   drawTexture(cx, cy, r);
 
-  // 🌗 PHASE (correct + stable)
+  // 🌗 PHASE (heavily damped — key fix)
   const phase = getPhase();
-  const light = Math.cos(phase * Math.PI * 2);
+
+  const angle = (phase - 0.5) * Math.PI;
+  const light = Math.sin(angle) * 0.3; // <-- damped movement
 
   ctx.fillStyle = "#121212";
   ctx.beginPath();
