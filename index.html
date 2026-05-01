@@ -7,127 +7,41 @@
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
-// Resize
 function resize(){
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  createStars();
 }
 window.addEventListener("resize", resize);
-
-// Stars
-let stars = [];
-
-function createStars(){
-  stars = [];
-  for(let i=0;i<120;i++){
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 1.2,
-      speed: 0.002 + Math.random() * 0.003
-    });
-  }
-}
-
 resize();
 
-// Phase
-let cachedPhase = 0.3;
-let lastUpdate = 0;
+// 🌗 FIXED TEST PHASE (so we can SEE it clearly)
+const phase = 0.25; // try changing this later
 
-function getPhase(){
-  const now = Date.now();
-
-  if(now - lastUpdate > 60000){
-    const newMoon = new Date("2000-01-06T18:14:00Z");
-    const diff = (new Date() - newMoon) / (1000 * 60 * 60 * 24);
-    cachedPhase = (diff % 29.53) / 29.53;
-    lastUpdate = now;
-  }
-
-  return cachedPhase;
-}
-
-// Day/Night
-function getDayFactor(){
-  const now = new Date();
-  const hours = now.getHours() + now.getMinutes()/60;
-  return 0.5 + 0.5 * Math.cos((hours - 12) * Math.PI / 12);
-}
-
-// Stars
-function drawStars(dayFactor){
-  const opacity = 0.25 * (1 - dayFactor);
-
-  for(let s of stars){
-    ctx.fillStyle = `rgba(255,255,255,${opacity})`;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fill();
-
-    s.x += s.speed;
-    if(s.x > canvas.width) s.x = 0;
-  }
-}
-
-// Texture
-function drawTexture(cx, cy, r){
-  ctx.globalAlpha = 0.04;
-
-  for(let i=0;i<60;i++){
-    const x = cx + (Math.random() - 0.5) * r * 1.6;
-    const y = cy + (Math.random() - 0.5) * r * 1.6;
-    const size = Math.random() * r * 0.06;
-
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI*2);
-    ctx.fillStyle = "black";
-    ctx.fill();
-  }
-
-  ctx.globalAlpha = 1;
-}
-
-// Draw
 function draw(){
   const w = canvas.width;
   const h = canvas.height;
 
   const cx = w/2;
   const cy = h/2;
-  const r = Math.min(w,h)*0.17;
-
-  const dayFactor = getDayFactor();
+  const r = Math.min(w,h)*0.18;
 
   // SKY
-  ctx.fillStyle = `rgb(${15 + dayFactor*10},${15 + dayFactor*10},${15 + dayFactor*10})`;
+  ctx.fillStyle = "#121212";
   ctx.fillRect(0,0,w,h);
 
-  drawStars(dayFactor);
+  // 🌙 CREATE CRESCENT USING CLIPPING
+  ctx.save();
 
-  // HALO
-  const halo = ctx.createRadialGradient(cx, cy, r*0.6, cx, cy, r*2.8);
-  halo.addColorStop(0, "rgba(200,200,200,0.05)");
-  halo.addColorStop(1, "rgba(0,0,0,0)");
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, r*2.8, 0, Math.PI*2);
-  ctx.fillStyle = halo;
-  ctx.fill();
-
-  // MOON BASE
+  // full moon circle
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.clip();
+
+  // draw full lit moon
   ctx.fillStyle = "#bbb";
-  ctx.fill();
+  ctx.fillRect(cx - r, cy - r, r*2, r*2);
 
-  // TEXTURE
-  drawTexture(cx, cy, r);
-
-  // 🌗 CORRECT CRESCENT (two-circle method)
-  const phase = getPhase();
-
+  // cut shadow using second circle
   const offset = Math.cos(phase * Math.PI * 2) * r;
 
   ctx.globalCompositeOperation = "destination-out";
@@ -137,6 +51,8 @@ function draw(){
   ctx.fill();
 
   ctx.globalCompositeOperation = "source-over";
+
+  ctx.restore();
 
   requestAnimationFrame(draw);
 }
