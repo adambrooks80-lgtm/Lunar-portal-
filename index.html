@@ -26,25 +26,35 @@
     border-radius:50%;
     background: radial-gradient(
       circle at 60% 50%,
-      rgba(255,255,255,0.15),
-      rgba(255,255,255,0.05) 40%,
+      rgba(255,255,255,0.12),
+      rgba(255,255,255,0.04) 40%,
       transparent 75%
     );
     filter: blur(20px);
   "></div>
 
-  <!-- 🌙 full moon -->
-  <div id="moon" style="
+  <!-- 🌙 FULL BRIGHT MOON -->
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    overflow:hidden;
   "></div>
 
-  <!-- 🌗 phase mask -->
+  <!-- 🌑 EARTHSHINE (faint full disc) -->
+  <div style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
+    opacity:0.12;
+  "></div>
+
+  <!-- 🌗 PHASE CUT -->
   <div id="maskWrap" style="
     position:absolute;
     width:100%;
@@ -58,7 +68,7 @@
       height:100%;
       border-radius:50%;
       background:black;
-      transform:translateX(0px);
+      opacity:0.85;
     "></div>
   </div>
 
@@ -83,7 +93,6 @@ function updateMoon(){
 
   const angle = phase * Math.PI * 2;
 
-  // 🔥 TRUE full cycle movement
   const offset = Math.cos(angle) * 260;
 
   mask.style.transform = `translateX(${offset}px)`;
