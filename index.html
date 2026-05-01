@@ -29,17 +29,31 @@
     box-shadow: 0 0 100px 30px rgba(200,200,200,0.12);
   "></div>
 
-  <!-- moon base -->
+  <!-- 🌙 REAL MOON TEXTURE -->
   <div id="moonSurface" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    background: radial-gradient(circle at 30% 30%, #eeeeee, #bbbbbb 60%, #666666);
     overflow:hidden;
-  "></div>
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(1.05) contrast(1.1);
+  ">
 
-  <!-- 🌗 shadow -->
+    <!-- subtle lighting overlay -->
+    <div style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 60%);
+    "></div>
+
+  </div>
+
+  <!-- 🌗 SHADOW -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
@@ -53,7 +67,7 @@
 
 <script>
 // --------------------
-// 🌙 PHASE
+// 🌙 MOON PHASE
 // --------------------
 let demo = true;
 
@@ -75,34 +89,6 @@ function updateMoon(){
   requestAnimationFrame(updateMoon);
 }
 updateMoon();
-
-// --------------------
-// 🌙 TEXTURE (craters)
-// --------------------
-const surface = document.getElementById("moonSurface");
-
-function addCraters(){
-  for(let i=0;i<40;i++){
-    const crater = document.createElement("div");
-
-    const size = Math.random() * 30 + 10;
-
-    crater.style.position = "absolute";
-    crater.style.width = size + "px";
-    crater.style.height = size + "px";
-    crater.style.borderRadius = "50%";
-
-    crater.style.left = Math.random()*220 + "px";
-    crater.style.top = Math.random()*220 + "px";
-
-    crater.style.background = "radial-gradient(circle, rgba(0,0,0,0.2), transparent)";
-    crater.style.opacity = 0.3;
-
-    surface.appendChild(crater);
-  }
-}
-
-addCraters();
 
 // --------------------
 // ⭐ STARS
