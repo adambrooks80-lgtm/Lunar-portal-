@@ -7,13 +7,18 @@
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
-// stable random
+// --------------------
+// Stable random
+// --------------------
 let seed = 12345;
 function rand(){
   seed = (seed * 16807) % 2147483647;
   return seed / 2147483647;
 }
 
+// --------------------
+// Resize
+// --------------------
 function resize(){
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -21,7 +26,9 @@ function resize(){
 }
 window.addEventListener("resize", resize);
 
-// 🌟 STARS
+// --------------------
+// Stars
+// --------------------
 let stars = [];
 
 function createStars(){
@@ -35,30 +42,48 @@ function createStars(){
       x: rand() * canvas.width,
       y: rand() * canvas.height,
       size: 0.6 + rand() * 1.2,
-      speedX: 0.005 + rand() * 0.005,
-      speedY: (rand() - 0.5) * 0.003
+      speedX: 0.003 + rand() * 0.003,
+      speedY: (rand() - 0.5) * 0.002
     });
   }
 }
 
 resize();
 
-// 🌗 REAL PHASE
+// --------------------
+// 🌗 Stable Moon Phase (KEY FIX)
+// --------------------
+let cachedPhase = 0;
+let lastUpdate = 0;
+
 function getPhase(){
   const now = Date.now();
-  const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
-  const days = (now - newMoon) / (1000 * 60 * 60 * 24);
-  return (days % 29.53) / 29.53;
+
+  if(now - lastUpdate > 60000){ // update once per minute
+
+    const newMoon = new Date("2000-01-06T18:14:00Z");
+    const diff = (new Date() - newMoon) / (1000 * 60 * 60 * 24);
+
+    cachedPhase = (diff % 29.53) / 29.53;
+    lastUpdate = now;
+  }
+
+  return cachedPhase;
 }
 
-// ☀️ DAY/NIGHT
+// --------------------
+// Day / Night
+// --------------------
 function getDayFactor(){
   const now = new Date();
   const hours = now.getHours() + now.getMinutes()/60;
+
   return 0.5 + 0.5 * Math.cos((hours - 12) * Math.PI / 12);
 }
 
-// 🌟 STARS
+// --------------------
+// Draw Stars
+// --------------------
 function drawStars(dayFactor){
   const opacity = 0.32 * (1 - dayFactor);
 
@@ -78,9 +103,11 @@ function drawStars(dayFactor){
   }
 }
 
-// 🌙 TEXTURE
+// --------------------
+// Texture
+// --------------------
 function drawTexture(cx, cy, r){
-  ctx.globalAlpha = 0.06;
+  ctx.globalAlpha = 0.05;
 
   for(let i=0;i<80;i++){
     const x = cx + (rand() - 0.5) * r * 1.6;
@@ -96,6 +123,9 @@ function drawTexture(cx, cy, r){
   ctx.globalAlpha = 1;
 }
 
+// --------------------
+// Draw Scene
+// --------------------
 function draw(){
   const w = canvas.width;
   const h = canvas.height;
@@ -119,6 +149,7 @@ function draw(){
   ctx.fillStyle = sky;
   ctx.fillRect(0,0,w,h);
 
+  // STARS
   drawStars(dayFactor);
 
   // HALO
@@ -133,7 +164,7 @@ function draw(){
   ctx.fillStyle = halo;
   ctx.fill();
 
-  // 🌙 MOON
+  // MOON
   ctx.save();
 
   ctx.beginPath();
@@ -156,14 +187,11 @@ function draw(){
 
   drawTexture(cx, cy, r);
 
-  // 🌗 PHASE — FIXED LIGHT MODEL
+  // 🌗 PHASE (stable)
   const phase = getPhase();
-
-  const angle = phase * Math.PI * 2;
-  const light = Math.cos(angle);
+  const light = Math.cos(phase * Math.PI * 2);
 
   ctx.fillStyle = "#121212";
-
   ctx.beginPath();
   ctx.ellipse(
     cx + light * r,
@@ -179,6 +207,9 @@ function draw(){
   ctx.restore();
 }
 
+// --------------------
+// Loop
+// --------------------
 function loop(){
   draw();
   requestAnimationFrame(loop);
