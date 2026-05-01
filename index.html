@@ -35,24 +35,26 @@ function createStars(){
       x: rand() * canvas.width,
       y: rand() * canvas.height,
       size: 0.6 + rand() * 1.2,
-      speedX: 0.015 + rand() * 0.01,
-      speedY: (rand() - 0.5) * 0.01
+      speedX: 0.005 + rand() * 0.005,
+      speedY: (rand() - 0.5) * 0.003
     });
   }
 }
 
 resize();
 
-// 🌗 PHASE
+// 🌗 REAL MOON PHASE (29.53 days)
 function getPhase(){
-  const t = Date.now() / 1000;
-  return (t % 20) / 20;
+  const now = Date.now();
+  const days = now / (1000 * 60 * 60 * 24);
+  return (days % 29.53) / 29.53;
 }
 
-// ☀️ FAST DAY/NIGHT (keep for now)
+// ☀️ REAL DAY/NIGHT
 function getDayFactor(){
-  const t = Date.now() / 1000;
-  return 0.5 + 0.5 * Math.cos((t % 60) / 60 * Math.PI * 2);
+  const now = new Date();
+  const hours = now.getHours() + now.getMinutes()/60;
+  return 0.5 + 0.5 * Math.cos((hours - 12) * Math.PI / 12);
 }
 
 // 🌟 STARS
@@ -75,9 +77,9 @@ function drawStars(dayFactor){
   }
 }
 
-// 🌙 FAKE TEXTURE (procedural craters)
+// 🌙 TEXTURE
 function drawTexture(cx, cy, r){
-  ctx.globalAlpha = 0.08;
+  ctx.globalAlpha = 0.06;
 
   for(let i=0;i<80;i++){
     const x = cx + (rand() - 0.5) * r * 1.6;
@@ -103,24 +105,24 @@ function draw(){
 
   const dayFactor = getDayFactor();
 
-  // SKY
+  // 🌌 SKY
   const sky = ctx.createRadialGradient(
     cx, cy, r*0.5,
     cx, cy, Math.max(w,h)
   );
 
-  const baseDark = 15 + dayFactor * 15;
+  const baseDark = 15 + dayFactor * 10;
   sky.addColorStop(0, `rgb(${baseDark+10},${baseDark+10},${baseDark+10})`);
   sky.addColorStop(1, `rgb(${baseDark},${baseDark},${baseDark})`);
 
   ctx.fillStyle = sky;
   ctx.fillRect(0,0,w,h);
 
-  // STARS
+  // 🌟 STARS
   drawStars(dayFactor);
 
-  // HALO
-  const haloStrength = 0.06 * (1 - dayFactor * 0.6);
+  // 🌙 HALO
+  const haloStrength = 0.05 * (1 - dayFactor * 0.5);
 
   const halo = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r*2.2);
   halo.addColorStop(0, `rgba(200,200,200,${haloStrength})`);
@@ -131,7 +133,7 @@ function draw(){
   ctx.fillStyle = halo;
   ctx.fill();
 
-  // MOON
+  // 🌙 MOON
   ctx.save();
 
   ctx.beginPath();
@@ -143,7 +145,7 @@ function draw(){
     cx, cy, r
   );
 
-  const brightness = 220 - dayFactor * 60;
+  const brightness = 220 - dayFactor * 40;
 
   base.addColorStop(0, `rgb(${brightness},${brightness},${brightness})`);
   base.addColorStop(0.5, `rgb(${brightness-50},${brightness-50},${brightness-50})`);
@@ -152,10 +154,8 @@ function draw(){
   ctx.fillStyle = base;
   ctx.fillRect(cx - r, cy - r, r*2, r*2);
 
-  // 🌙 TEXTURE LAYER
   drawTexture(cx, cy, r);
 
-  // PHASE
   const phase = getPhase();
 
   ctx.fillStyle = "#121212";
