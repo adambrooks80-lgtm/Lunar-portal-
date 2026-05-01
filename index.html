@@ -12,18 +12,31 @@
   font-family:sans-serif;
 ">
 
-<div id="moon" style="position:relative; width:240px; height:240px;">
+<div id="moonWrap" style="
+  position:relative;
+  width:260px;
+  height:260px;
+">
 
-  <!-- full moon -->
+  <!-- 🌙 glow -->
   <div style="
     position:absolute;
     width:100%;
     height:100%;
-    background:#dddddd;
+    border-radius:50%;
+    box-shadow: 0 0 80px 20px rgba(200,200,200,0.15);
+  "></div>
+
+  <!-- 🌙 full moon -->
+  <div style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle at 30% 30%, #eeeeee, #bbbbbb 60%, #777777);
     border-radius:50%;
   "></div>
 
-  <!-- shadow -->
+  <!-- 🌗 shadow -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
@@ -50,24 +63,20 @@ btn.onclick = () => {
   btn.innerText = demo ? "Switch to Real Time" : "Switch to Demo";
 };
 
-// real lunar cycle
+// real vs demo
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
-
-// demo cycle (10 seconds)
 const demoCycle = 10000;
 
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 function updateMoon(){
   const now = Date.now();
-
   const cycle = demo ? demoCycle : realCycle;
 
   const phase = ((now - newMoon) % cycle) / cycle;
 
   const offset = Math.cos(phase * Math.PI * 2);
-
-  const px = offset * 120;
+  const px = offset * 130;
 
   shadow.style.transform = `translateX(${px}px)`;
 
