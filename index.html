@@ -32,15 +32,15 @@
     background: radial-gradient(
       circle at 65% 50%,
       rgba(255,255,255,0.15) 0%,
-      rgba(255,255,255,0.06) 30%,
+      rgba(255,255,255,0.05) 30%,
       rgba(255,255,255,0.02) 55%,
       transparent 80%
     );
-    filter: blur(18px);
+    filter: blur(20px);
   "></div>
 
   <!-- 🌙 SURFACE -->
-  <div id="moonSurface" style="
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
@@ -50,25 +50,25 @@
     background-size:cover;
   "></div>
 
-  <!-- 🌗 SHADOW -->
+  <!-- 🌗 TRUE SHADOW -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    background:rgba(0,0,0,0.85);
-    filter:blur(4px);
+    background:rgba(0,0,0,0.9);
+    filter: blur(3px);
   "></div>
 
   <!-- 🌙 faint dark-side detail -->
-  <div id="darkDetail" style="
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    opacity:0.12;
+    opacity:0.08;
     mix-blend-mode:lighten;
   "></div>
 
@@ -89,7 +89,7 @@
 
 <script>
 
-// 🌙 PHASE SYSTEM (smooth + accurate)
+// 🌙 PHASE SYSTEM (pure geometry)
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
@@ -98,7 +98,6 @@ const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 const shadow = document.getElementById("shadow");
 const halo = document.getElementById("halo");
-const darkDetail = document.getElementById("darkDetail");
 
 function updateMoon(){
   const now = Date.now();
@@ -108,20 +107,12 @@ function updateMoon(){
 
   const angle = phase * Math.PI * 2;
 
-  const illumination = (1 - Math.cos(angle)) / 2;
-
-  // 🔥 FIX: continuous motion (no direction flip)
-  const offset = Math.cos(angle) * 140;
+  // 🔥 TRUE full range motion
+  const offset = Math.cos(angle) * 150;
 
   shadow.style.transform = `translateX(${offset}px)`;
 
-  // shadow fades correctly
-  shadow.style.opacity = 1 - illumination;
-
-  // subtle dark side detail
-  darkDetail.style.opacity = (1 - illumination) * 0.12;
-
-  // halo follows light
+  // halo follows light direction slightly
   halo.style.transform = `translateX(${offset * 0.15}px)`;
 
   requestAnimationFrame(updateMoon);
