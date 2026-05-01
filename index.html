@@ -3,44 +3,52 @@
 <body style="
   margin:0;
   background:black;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
   overflow:hidden;
+  height:100vh;
 ">
 
+<!-- ⭐ STARS -->
+<div id="stars"></div>
+
+<!-- 🌙 MOON -->
 <div id="moonWrap" style="
-  position:relative;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
   width:260px;
   height:260px;
 ">
 
-  <!-- 🌙 HALO -->
-  <div style="
+  <!-- 🌫️ REALISTIC HALO -->
+  <div id="halo" style="
     position:absolute;
-    width:100%;
-    height:100%;
+    width:140%;
+    height:140%;
+    top:-20%;
+    left:-20%;
     border-radius:50%;
+    pointer-events:none;
     background: radial-gradient(
-      circle,
-      rgba(255,255,255,0.2) 0%,
-      rgba(255,255,255,0.1) 55%,
-      rgba(255,255,255,0.05) 70%,
-      transparent 100%
+      circle at 65% 50%,
+      rgba(255,255,255,0.18) 0%,
+      rgba(255,255,255,0.08) 25%,
+      rgba(255,255,255,0.04) 45%,
+      rgba(255,255,255,0.015) 65%,
+      transparent 85%
     );
-    transform: scale(1.25);
+    filter: blur(20px);
   "></div>
 
-  <!-- 🌙 MOON -->
+  <!-- 🌙 MOON SURFACE -->
   <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     overflow:hidden;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size: cover;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
   "></div>
 
   <!-- 🌗 TRUE SHADOW -->
@@ -49,27 +57,43 @@
     width:100%;
     height:100%;
     border-radius:50%;
-    background: rgba(0,0,0,0.85);
-    filter: blur(4px);
-    transform: translateX(80px);
+    background:rgba(0,0,0,0.85);
+    filter:blur(4px);
+    transform:translateX(80px);
   "></div>
 
-  <!-- 🌙 faint texture in dark side -->
+  <!-- 🌙 faint detail in dark side -->
   <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size: cover;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
     opacity:0.15;
-    mix-blend-mode: lighten;
+    mix-blend-mode:lighten;
   "></div>
 
 </div>
 
+<style>
+#stars{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+}
+.star{
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
+</style>
+
 <script>
-// 🌙 phase system
+
+// 🌙 PHASE SYSTEM
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
@@ -77,6 +101,7 @@ const demoCycle = 10000;
 const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
 
 const shadow = document.getElementById("shadow");
+const halo = document.getElementById("halo");
 
 function updateMoon(){
   const now = Date.now();
@@ -84,15 +109,66 @@ function updateMoon(){
 
   const phase = ((now - newMoon) % cycle) / cycle;
 
-  // FULL RANGE FIX (this was your bug)
   const offset = Math.cos(phase * Math.PI * 2);
 
+  // 🌗 shadow movement (correct geometry)
   shadow.style.transform = `translateX(${offset * 130}px)`;
+
+  // 🌫️ halo follows light slightly
+  halo.style.transform = `translateX(${offset * 20}px)`;
 
   requestAnimationFrame(updateMoon);
 }
 
 updateMoon();
+
+
+// ⭐ STARS
+const starContainer = document.getElementById("stars");
+let stars = [];
+
+function createStars(){
+  for(let i=0;i<70;i++){   // subtle amount
+    const s = document.createElement("div");
+
+    const size = Math.random()*1.6 + 0.3;
+
+    s.className = "star";
+    s.style.width = size+"px";
+    s.style.height = size+"px";
+
+    s.x = Math.random()*window.innerWidth;
+    s.y = Math.random()*window.innerHeight;
+
+    s.style.left = s.x+"px";
+    s.style.top = s.y+"px";
+
+    s.style.opacity = Math.random()*0.4 + 0.1;
+
+    stars.push(s);
+    starContainer.appendChild(s);
+  }
+}
+
+createStars();
+
+function updateStars(){
+  for(let s of stars){
+    s.x += 0.01;
+
+    if(s.x > window.innerWidth){
+      s.x = 0;
+      s.y = Math.random()*window.innerHeight;
+    }
+
+    s.style.left = s.x+"px";
+  }
+
+  requestAnimationFrame(updateStars);
+}
+
+updateStars();
+
 </script>
 
 </body>
