@@ -21,21 +21,21 @@ function resize(){
 }
 window.addEventListener("resize", resize);
 
-// 🌟 STAR FIELD (FORCED VISIBILITY)
+// 🌟 STAR FIELD (balanced)
 let stars = [];
 
 function createStars(){
   stars = [];
   seed = 12345;
 
-  const count = Math.floor((canvas.width * canvas.height) / 8000); // many more
+  const count = Math.floor((canvas.width * canvas.height) / 14000);
 
   for(let i=0;i<count;i++){
     stars.push({
       x: rand() * canvas.width,
       y: rand() * canvas.height,
-      size: 1 + rand() * 2.5, // BIG
-      speed: 0.02 + rand() * 0.04
+      size: 0.6 + rand() * 1.2,
+      speed: 0.01 + rand() * 0.02
     });
   }
 }
@@ -50,8 +50,7 @@ function getPhase(){
 function drawStars(){
   for(let s of stars){
 
-    // MUCH brighter
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.fillStyle = "rgba(255,255,255,0.32)";
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
     ctx.fill();
@@ -69,7 +68,7 @@ function draw(){
   const cy = h/2;
   const r = Math.min(w,h)*0.2;
 
-  // SKY
+  // 🌌 SKY
   const sky = ctx.createRadialGradient(
     cx, cy, r*0.5,
     cx, cy, Math.max(w,h)
@@ -80,10 +79,10 @@ function draw(){
   ctx.fillStyle = sky;
   ctx.fillRect(0,0,w,h);
 
-  // STARS (should now be obvious)
+  // 🌟 STARS
   drawStars();
 
-  // HALO
+  // 🌙 HALO
   const halo = ctx.createRadialGradient(cx, cy, r*0.8, cx, cy, r*2.2);
   halo.addColorStop(0, "rgba(200,200,200,0.06)");
   halo.addColorStop(1, "rgba(0,0,0,0)");
@@ -93,7 +92,7 @@ function draw(){
   ctx.fillStyle = halo;
   ctx.fill();
 
-  // MOON
+  // 🌙 MOON
   ctx.save();
 
   ctx.beginPath();
