@@ -50,7 +50,7 @@
     background-size:cover;
   "></div>
 
-  <!-- 🌗 SHADOW (scaled correctly now) -->
+  <!-- 🌗 SHADOW -->
   <div id="shadow" style="
     position:absolute;
     width:100%;
@@ -89,7 +89,7 @@
 
 <script>
 
-// 🌙 PHASE SYSTEM (accurate)
+// 🌙 PHASE SYSTEM (accurate but corrected brightness)
 let demo = true;
 
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
@@ -108,33 +108,25 @@ function updateMoon(){
 
   const angle = phase * Math.PI * 2;
 
-  // illumination amount (0=new, 1=full)
   const illumination = (1 - Math.cos(angle)) / 2;
 
-  // direction (waxing vs waning)
   const direction = Math.sin(angle) >= 0 ? 1 : -1;
 
-  // move shadow correctly
+  // correct geometry
   const offset = direction * (1 - illumination) * 140;
-
   shadow.style.transform = `translateX(${offset}px)`;
 
-  // 🌑 fade moon at new phase
-  moonSurface.style.opacity = Math.max(0.15, illumination);
-
-  // 🌙 reduce shadow at full moon
+  // FIX: do NOT dim lit side
   shadow.style.opacity = 1 - illumination;
 
-  // 🌙 faint dark detail only when needed
-  darkDetail.style.opacity = (1 - illumination) * 0.15;
+  // subtle dark side detail only
+  darkDetail.style.opacity = (1 - illumination) * 0.12;
 
-  // 🌫️ halo follows light
+  // halo follows light
   halo.style.transform = `translateX(${direction * 15}px)`;
 
   requestAnimationFrame(updateMoon);
 }
-
-const moonSurface = document.getElementById("moonSurface");
 
 updateMoon();
 
