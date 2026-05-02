@@ -21,7 +21,7 @@
 ">
 
   <!-- 🌙 BASE MOON -->
-  <div id="moonSurface" style="
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
@@ -30,16 +30,15 @@
     background-size:cover;
   "></div>
 
-  <!-- 🌙 LIGHT BLEED (CLIPPED — THIS IS THE FIX) -->
-  <div id="lightBleed" style="
+  <!-- 🌙 LIGHT SIDE BOOST -->
+  <div id="lightLayer" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-    opacity:0.25;
-    filter:blur(2px);
+    background:white;
+    opacity:0;
+    mix-blend-mode:screen;
   "></div>
 
   <!-- 🌑 EARTHSHINE -->
@@ -48,12 +47,12 @@
     width:100%;
     height:100%;
     border-radius:50%;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-    opacity:0.06;
+    background:white;
+    opacity:0;
+    mix-blend-mode:screen;
   "></div>
 
-  <!-- 🌗 SHADOW -->
+  <!-- 🌗 SHADOW (CRISP) -->
   <div id="shadow" style="
     position:absolute;
     width:120%;
@@ -62,7 +61,6 @@
     left:-10%;
     border-radius:50%;
     background:black;
-    filter:blur(2px);
   "></div>
 
 </div>
@@ -87,7 +85,7 @@ const cycle = 12000;
 const start = Date.now();
 
 const shadow = document.getElementById("shadow");
-const lightBleed = document.getElementById("lightBleed");
+const lightLayer = document.getElementById("lightLayer");
 const earthshine = document.getElementById("earthshine");
 
 // ⭐ STARS
@@ -116,21 +114,19 @@ function update(){
 
   const offset = Math.cos(angle) * 220;
 
-  // 🌗 SHADOW
+  // 🌗 SHADOW (clean geometry)
   shadow.style.transform = `translateX(${offset}px)`;
-
-  // 🌙 LIGHT BLEED (slightly offset toward light)
-  lightBleed.style.transform =
-    `translateX(${offset * 0.15}px)`;
 
   // 🌙 ILLUMINATION
   const illum = (1 - Math.cos(angle)) / 2;
 
-  // 🌑 EARTHSHINE
-  earthshine.style.opacity = 0.03 + (1 - illum) * 0.08;
+  // 🌙 LIGHT SIDE BOOST (no blur)
+  lightLayer.style.opacity = illum * 0.08;
+  lightLayer.style.transform =
+    `translateX(${offset * 0.2}px)`;
 
-  // 🌙 LIGHT BLEED INTENSITY
-  lightBleed.style.opacity = illum * 0.25;
+  // 🌑 EARTHSHINE
+  earthshine.style.opacity = (1 - illum) * 0.08;
 
   requestAnimationFrame(update);
 }
