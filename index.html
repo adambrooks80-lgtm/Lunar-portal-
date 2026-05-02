@@ -7,14 +7,14 @@
   overflow:hidden;
 ">
 
-<!-- 🌌 SKY (ALWAYS VISIBLE) -->
+<!-- SKY -->
 <div id="skyWrap">
   <div id="stars"></div>
 </div>
 
 <div id="ambient"></div>
 
-<!-- 🌙 MOON WRAP -->
+<!-- MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -24,8 +24,8 @@
   height:260px;
 ">
 
-  <!-- 🌙 CLIPPING MASK -->
-  <div id="moonMask" style="
+  <!-- CLIPPED MOON -->
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
@@ -40,7 +40,6 @@
       height:100%;
       background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
       background-size:cover;
-      z-index:2;
     "></div>
 
     <!-- EARTHSHINE -->
@@ -51,10 +50,9 @@
       background:white;
       opacity:0;
       mix-blend-mode:screen;
-      z-index:1;
     "></div>
 
-    <!-- 🌗 SHADOW (NOW CLIPPED) -->
+    <!-- SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -64,7 +62,6 @@
       border-radius:50%;
       background:black;
       opacity:0.85;
-      z-index:3;
     "></div>
 
     <div id="shadowSoft" style="
@@ -76,20 +73,9 @@
       border-radius:50%;
       background:black;
       opacity:0.2;
-      z-index:2;
     "></div>
 
   </div>
-
-  <!-- 🌙 EDGE GLOW (outside mask) -->
-  <div style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    pointer-events:none;
-    box-shadow:0 0 4px rgba(255,255,255,0.08);
-  "></div>
 
 </div>
 
@@ -124,7 +110,7 @@ const moonSurface = document.getElementById("moonSurface");
 const skyWrap = document.getElementById("skyWrap");
 const ambient = document.getElementById("ambient");
 
-// ⭐ STARS
+// STARS
 const stars = [];
 const starContainer = document.getElementById("stars");
 
@@ -155,11 +141,11 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌗 shadow movement (CLIPPED INSIDE MOON)
+  // SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
   shadowSoft.style.transform = `translateX(${offset}px) scale(1.02)`;
 
-  // 🌙 rotation + tilt
+  // ROTATION + TILT
   const rotation = angle * 0.1;
   const tilt = 12 + Math.sin(angle * 0.5) * 6;
 
@@ -169,11 +155,11 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
-  // 🌌 sky
+  // SKY
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
-  // ⭐ twinkle
+  // TWINKLE
   for(let s of stars){
     s.style.opacity += (Math.random()-0.5)*0.008;
     s.style.opacity = Math.max(0.1, Math.min(0.7, s.style.opacity));
@@ -181,14 +167,14 @@ function update(){
 
   const illum = (1 - Math.cos(angle)) / 2;
 
-  // 🌑 earthshine
+  // EARTHSHINE
   earthshine.style.opacity = (1 - illum) * 0.08;
 
-  // 🌙 realism
+  // 🌙 subtle limb brightening via contrast (NOT glow)
   moonSurface.style.filter =
     `contrast(${1 + illum * 0.25}) brightness(${0.9 + illum * 0.2})`;
 
-  // ✨ subtle magic
+  // MAGIC
   const fullBoost = Math.pow(illum, 6);
   const newBoost  = Math.pow(1 - illum, 6);
 
