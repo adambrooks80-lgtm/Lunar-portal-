@@ -12,74 +12,46 @@
   <div id="stars"></div>
 </div>
 
-<div id="haze"></div>
-<div id="shootingStars"></div>
-
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
   left:50%;
-  transform:translate(-50%,-50%) rotate(12deg);
+  transform:translate(-50%,-50%);
   width:260px;
   height:260px;
 ">
 
   <!-- 🌙 MOON -->
-  <div id="moonSurface" style="
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    filter:hue-rotate(200deg) saturate(0.7);
   "></div>
 
-  <!-- 🌙 VERY TIGHT EDGE GLOW (not a halo) -->
+  <!-- 🌗 SHADOW (SOLID — no gradient) -->
+  <div id="shadow" style="
+    position:absolute;
+    width:140%;
+    height:140%;
+    top:-20%;
+    left:-20%;
+    border-radius:50%;
+    background:black;
+    opacity:0.9;
+  "></div>
+
+  <!-- 🌙 subtle edge glow -->
   <div id="edgeGlow" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
+    box-shadow:0 0 4px rgba(255,255,255,0.15);
     pointer-events:none;
-    box-shadow: 0 0 3px rgba(255,255,255,0.15);
   "></div>
-
-  <!-- 🌑 EARTHSHINE -->
-  <div style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-    opacity:0.08;
-  "></div>
-
-  <!-- 🌗 TERMINATOR -->
-  <div style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    overflow:hidden;
-  ">
-    <div id="mask" style="
-      position:absolute;
-      width:100%;
-      height:100%;
-      border-radius:50%;
-      background: radial-gradient(
-        circle,
-        rgba(0,0,0,0.92) 55%,
-        rgba(0,0,0,0.6) 65%,
-        rgba(0,0,0,0.3) 75%,
-        rgba(0,0,0,0.1) 85%,
-        transparent 100%
-      );
-      filter: blur(3px);
-    "></div>
-  </div>
 
 </div>
 
@@ -93,158 +65,48 @@
 }
 #stars { position:absolute; width:100%; height:100%; }
 .star { position:absolute; background:white; border-radius:50%; }
-
-#haze, #shootingStars {
-  position:absolute;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-}
-
-.shooting-star {
-  position:absolute;
-  width:2px;
-  height:2px;
-  background:white;
-  box-shadow:0 0 6px white;
-}
 </style>
 
 <script>
 
-// 🌙 MASTER CLOCK
-let demo = true;
-const cycle = demo ? 12000 : 29.53 * 24 * 60 * 60 * 1000;
+// 🌙 CLOCK
+const cycle = 12000;
 const start = Date.now();
 
-const mask = document.getElementById("mask");
-const moonWrap = document.getElementById("moonWrap");
-const skyWrap = document.getElementById("skyWrap");
-const edgeGlow = document.getElementById("edgeGlow");
+const shadow = document.getElementById("shadow");
 
 // ⭐ stars
-const stars = [];
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
   const s = document.createElement("div");
-  const size = Math.random()*1.8 + 0.4;
-
   s.className = "star";
+  const size = Math.random()*1.5 + 0.5;
+
   s.style.width = size+"px";
   s.style.height = size+"px";
 
-  s.x = Math.random()*window.innerWidth;
-  s.y = Math.random()*window.innerHeight;
-
-  s.style.left = s.x+"px";
-  s.style.top = s.y+"px";
+  s.style.left = Math.random()*window.innerWidth+"px";
+  s.style.top = Math.random()*window.innerHeight+"px";
   s.style.opacity = Math.random()*0.6 + 0.2;
 
-  stars.push(s);
   starContainer.appendChild(s);
 }
 
 function update(){
 
-  const elapsed = Date.now() - start;
-  const phase = (elapsed % cycle) / cycle;
+  const phase = ((Date.now() - start) % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
-  // 🌗 phase
+  // 🔥 FULL TRAVEL — no ring artifact
   const offset = Math.cos(angle) * 260;
-  mask.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 tilt
-  const tilt = Math.sin(angle * 0.5) * 8;
-  moonWrap.style.transform =
-    `translate(-50%,-50%) rotate(${12 + tilt}deg)`;
-
-  // 🌌 sky rotation
-  skyWrap.style.transform =
-    `rotate(${phase * 360}deg)`;
-
-  // ⭐ twinkle
-  for(let s of stars){
-    s.style.opacity += (Math.random()-0.5)*0.01;
-    s.style.opacity = Math.max(0.1, Math.min(0.6, s.style.opacity));
-  }
-
-  // 🌙 subtle glow reacts to phase (but stays tight)
-  const illum = (1 - Math.cos(angle)) / 2;
-
-  edgeGlow.style.boxShadow =
-    `0 0 ${2 + illum * 4}px rgba(255,255,255,${0.1 + illum * 0.2})`;
+  shadow.style.transform = `translateX(${offset}px)`;
 
   requestAnimationFrame(update);
 }
 
 update();
-
-
-// 🌫️ haze
-const haze = document.getElementById("haze");
-haze.style.background = `
-  radial-gradient(circle at 30% 40%, rgba(255,255,255,0.03), transparent 70%),
-  radial-gradient(circle at 70% 60%, rgba(255,255,255,0.02), transparent 70%)
-`;
-
-let h = 0;
-function updateHaze(){
-  h += 0.002;
-  haze.style.transform = `translateX(${Math.sin(h)*10}px)`;
-  requestAnimationFrame(updateHaze);
-}
-updateHaze();
-
-
-// ✨ shooting stars
-const shootingContainer = document.getElementById("shootingStars");
-
-function createShootingStar(){
-  const star = document.createElement("div");
-  star.className = "shooting-star";
-
-  const startX = Math.random()*window.innerWidth;
-  const startY = Math.random()*window.innerHeight * 0.5;
-
-  star.style.left = startX+"px";
-  star.style.top = startY+"px";
-
-  shootingContainer.appendChild(star);
-
-  let x = startX;
-  let y = startY;
-  const speed = 8 + Math.random()*4;
-
-  function animate(){
-    x += speed;
-    y += speed * 0.5;
-
-    star.style.left = x+"px";
-    star.style.top = y+"px";
-    star.style.opacity = 1 - (x - startX)/300;
-
-    if(star.style.opacity <= 0){
-      star.remove();
-      return;
-    }
-
-    requestAnimationFrame(animate);
-  }
-
-  animate();
-}
-
-function shootingLoop(){
-  const delay = 6000 + Math.random()*12000;
-  setTimeout(()=>{
-    createShootingStar();
-    shootingLoop();
-  }, delay);
-}
-
-shootingLoop();
 
 </script>
 
