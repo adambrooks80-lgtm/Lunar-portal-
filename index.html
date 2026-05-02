@@ -22,8 +22,8 @@
   height:260px;
 ">
 
-  <!-- MOON -->
-  <div style="
+  <!-- 🌙 MOON -->
+  <div id="moonSurface" style="
     position:absolute;
     width:100%;
     height:100%;
@@ -33,31 +33,7 @@
     z-index:2;
   "></div>
 
-  <!-- 🌙 LIGHT SOFTENING (this replaces shadow softness) -->
-  <div id="lightSoft" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:white;
-    opacity:0;
-    mix-blend-mode:screen;
-    z-index:3;
-  "></div>
-
-  <!-- 🌙 MAIN LIGHT -->
-  <div id="lightLayer" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:white;
-    opacity:0;
-    mix-blend-mode:screen;
-    z-index:3;
-  "></div>
-
-  <!-- EARTHSHINE -->
+  <!-- 🌑 EARTHSHINE -->
   <div id="earthshine" style="
     position:absolute;
     width:100%;
@@ -65,11 +41,10 @@
     border-radius:50%;
     background:white;
     opacity:0;
-    mix-blend-mode:screen;
     z-index:1;
   "></div>
 
-  <!-- 🌗 SINGLE CLEAN SHADOW -->
+  <!-- 🌗 SHADOW -->
   <div id="shadow" style="
     position:absolute;
     width:120%;
@@ -78,7 +53,7 @@
     left:-10%;
     border-radius:50%;
     background:black;
-    z-index:4;
+    z-index:3;
   "></div>
 
 </div>
@@ -86,7 +61,12 @@
 <style>
 #skyWrap{ position:absolute; width:100%; height:100%; }
 #stars{ position:absolute; width:100%; height:100%; }
-.star{ position:absolute; background:white; border-radius:50%; }
+
+.star{
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
 
 #ambient{
   position:absolute;
@@ -102,14 +82,13 @@ const cycle = 12000;
 const start = Date.now();
 
 const shadow = document.getElementById("shadow");
-const lightLayer = document.getElementById("lightLayer");
-const lightSoft = document.getElementById("lightSoft");
 const earthshine = document.getElementById("earthshine");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 const ambient = document.getElementById("ambient");
+const moonSurface = document.getElementById("moonSurface");
 
-// ⭐ stars
+// ⭐ STARS
 const stars = [];
 const starContainer = document.getElementById("stars");
 
@@ -140,7 +119,7 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌗 CLEAN SHADOW
+  // 🌗 SHADOW
   shadow.style.transform = `translateX(${offset}px)`;
 
   // 🌙 tilt
@@ -148,7 +127,7 @@ function update(){
   moonWrap.style.transform =
     `translate(-50%,-50%) rotate(${tilt}deg)`;
 
-  // 🌌 sky
+  // 🌌 sky rotation
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
@@ -160,18 +139,12 @@ function update(){
 
   const illum = (1 - Math.cos(angle)) / 2;
 
-  // 🌙 LIGHT (sharp)
-  lightLayer.style.opacity = illum * 0.06;
-  lightLayer.style.transform =
-    `translateX(${offset * 0.2}px)`;
+  // 🌑 earthshine (only in dark areas visually)
+  earthshine.style.opacity = (1 - illum) * 0.06;
 
-  // 🌙 LIGHT SOFTENING (this creates diffuse edge feel)
-  lightSoft.style.opacity = illum * 0.12;
-  lightSoft.style.transform =
-    `translateX(${offset * 0.35}px)`;
-
-  // 🌑 earthshine
-  earthshine.style.opacity = (1 - illum) * 0.08;
+  // 🌙 subtle contrast shift (replaces fake glow)
+  moonSurface.style.filter =
+    `contrast(${1 + illum * 0.25}) brightness(${0.9 + illum * 0.2})`;
 
   // ✨ subtle magic
   const fullBoost = Math.pow(illum, 6);
@@ -179,8 +152,8 @@ function update(){
 
   ambient.style.background = `
     radial-gradient(circle at center,
-      rgba(255,255,255,${fullBoost * 0.05}),
-      rgba(100,120,255,${newBoost * 0.05}),
+      rgba(255,255,255,${fullBoost * 0.04}),
+      rgba(100,120,255,${newBoost * 0.04}),
       transparent 70%
     )
   `;
