@@ -24,20 +24,8 @@
   height:260px;
 ">
 
-  <!-- 🌙 EDGE GLOW -->
-  <div id="edgeGlow" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    pointer-events:none;
-    box-shadow:
-      0 0 8px rgba(255,255,255,0.25),
-      0 0 18px rgba(255,255,255,0.15);
-  "></div>
-
   <!-- 🌙 MOON -->
-  <div style="
+  <div id="moonSurface" style="
     position:absolute;
     width:100%;
     height:100%;
@@ -45,6 +33,16 @@
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
     filter:hue-rotate(200deg) saturate(0.7);
+  "></div>
+
+  <!-- 🌙 VERY TIGHT EDGE GLOW (not a halo) -->
+  <div id="edgeGlow" style="
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    pointer-events:none;
+    box-shadow: 0 0 3px rgba(255,255,255,0.15);
   "></div>
 
   <!-- 🌑 EARTHSHINE -->
@@ -95,12 +93,14 @@
 }
 #stars { position:absolute; width:100%; height:100%; }
 .star { position:absolute; background:white; border-radius:50%; }
+
 #haze, #shootingStars {
   position:absolute;
   width:100%;
   height:100%;
   pointer-events:none;
 }
+
 .shooting-star {
   position:absolute;
   width:2px;
@@ -114,10 +114,7 @@
 
 // 🌙 MASTER CLOCK
 let demo = true;
-const realCycle = 29.53 * 24 * 60 * 60 * 1000;
-const demoCycle = 12000;
-
-const cycle = demo ? demoCycle : realCycle;
+const cycle = demo ? 12000 : 29.53 * 24 * 60 * 60 * 1000;
 const start = Date.now();
 
 const mask = document.getElementById("mask");
@@ -125,10 +122,10 @@ const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 const edgeGlow = document.getElementById("edgeGlow");
 
+// ⭐ stars
 const stars = [];
 const starContainer = document.getElementById("stars");
 
-// ⭐ stars
 for(let i=0;i<100;i++){
   const s = document.createElement("div");
   const size = Math.random()*1.8 + 0.4;
@@ -154,7 +151,7 @@ function update(){
   const phase = (elapsed % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
-  // 🌗 phase movement
+  // 🌗 phase
   const offset = Math.cos(angle) * 260;
   mask.style.transform = `translateX(${offset}px)`;
 
@@ -173,13 +170,11 @@ function update(){
     s.style.opacity = Math.max(0.1, Math.min(0.6, s.style.opacity));
   }
 
-  // 🌙 EDGE GLOW reacts to phase
-  const illumination = (1 - Math.cos(angle)) / 2;
+  // 🌙 subtle glow reacts to phase (but stays tight)
+  const illum = (1 - Math.cos(angle)) / 2;
 
-  edgeGlow.style.boxShadow = `
-    0 0 ${6 + illumination * 10}px rgba(255,255,255,${0.15 + illumination * 0.25}),
-    0 0 ${12 + illumination * 20}px rgba(255,255,255,${0.08 + illumination * 0.15})
-  `;
+  edgeGlow.style.boxShadow =
+    `0 0 ${2 + illum * 4}px rgba(255,255,255,${0.1 + illum * 0.2})`;
 
   requestAnimationFrame(update);
 }
@@ -203,7 +198,7 @@ function updateHaze(){
 updateHaze();
 
 
-// ✨ shooting stars unchanged
+// ✨ shooting stars
 const shootingContainer = document.getElementById("shootingStars");
 
 function createShootingStar(){
