@@ -24,16 +24,16 @@
   height:260px;
 ">
 
-  <!-- 🌙 EDGE GLOW (replaces halo) -->
-  <div style="
+  <!-- 🌙 EDGE GLOW -->
+  <div id="edgeGlow" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    box-shadow:
-      0 0 6px rgba(255,255,255,0.15),
-      0 0 12px rgba(255,255,255,0.08);
     pointer-events:none;
+    box-shadow:
+      0 0 8px rgba(255,255,255,0.25),
+      0 0 18px rgba(255,255,255,0.15);
   "></div>
 
   <!-- 🌙 MOON -->
@@ -86,27 +86,15 @@
 </div>
 
 <style>
-#skyWrap {
-  position:absolute;
-  width:100%;
-  height:100%;
-}
+#skyWrap { position:absolute; width:100%; height:100%; }
 #milkyway {
   position:absolute;
   width:100%;
   height:100%;
   background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%);
 }
-#stars {
-  position:absolute;
-  width:100%;
-  height:100%;
-}
-.star {
-  position:absolute;
-  background:white;
-  border-radius:50%;
-}
+#stars { position:absolute; width:100%; height:100%; }
+.star { position:absolute; background:white; border-radius:50%; }
 #haze, #shootingStars {
   position:absolute;
   width:100%;
@@ -135,6 +123,7 @@ const start = Date.now();
 const mask = document.getElementById("mask");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
+const edgeGlow = document.getElementById("edgeGlow");
 
 const stars = [];
 const starContainer = document.getElementById("stars");
@@ -165,20 +154,32 @@ function update(){
   const phase = (elapsed % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
+  // 🌗 phase movement
   const offset = Math.cos(angle) * 260;
   mask.style.transform = `translateX(${offset}px)`;
 
+  // 🌙 tilt
   const tilt = Math.sin(angle * 0.5) * 8;
   moonWrap.style.transform =
     `translate(-50%,-50%) rotate(${12 + tilt}deg)`;
 
+  // 🌌 sky rotation
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
+  // ⭐ twinkle
   for(let s of stars){
     s.style.opacity += (Math.random()-0.5)*0.01;
     s.style.opacity = Math.max(0.1, Math.min(0.6, s.style.opacity));
   }
+
+  // 🌙 EDGE GLOW reacts to phase
+  const illumination = (1 - Math.cos(angle)) / 2;
+
+  edgeGlow.style.boxShadow = `
+    0 0 ${6 + illumination * 10}px rgba(255,255,255,${0.15 + illumination * 0.25}),
+    0 0 ${12 + illumination * 20}px rgba(255,255,255,${0.08 + illumination * 0.15})
+  `;
 
   requestAnimationFrame(update);
 }
@@ -202,7 +203,7 @@ function updateHaze(){
 updateHaze();
 
 
-// ✨ shooting stars
+// ✨ shooting stars unchanged
 const shootingContainer = document.getElementById("shootingStars");
 
 function createShootingStar(){
