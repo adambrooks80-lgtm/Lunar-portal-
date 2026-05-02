@@ -7,12 +7,14 @@
   overflow:hidden;
 ">
 
+<!-- 🌌 SKY (ALWAYS VISIBLE) -->
 <div id="skyWrap">
   <div id="stars"></div>
 </div>
 
 <div id="ambient"></div>
 
+<!-- 🌙 MOON WRAP -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -22,43 +24,72 @@
   height:260px;
 ">
 
-  <!-- 🌙 MOON -->
-  <div id="moonSurface" style="
+  <!-- 🌙 CLIPPING MASK -->
+  <div id="moonMask" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-    z-index:2;
-  "></div>
+    overflow:hidden;
+  ">
 
-  <!-- 🌙 EDGE GLOW (tight, no halo) -->
-  <div id="edgeGlow" style="
+    <!-- MOON SURFACE -->
+    <div id="moonSurface" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+      background-size:cover;
+      z-index:2;
+    "></div>
+
+    <!-- EARTHSHINE -->
+    <div id="earthshine" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      background:white;
+      opacity:0;
+      mix-blend-mode:screen;
+      z-index:1;
+    "></div>
+
+    <!-- 🌗 SHADOW (NOW CLIPPED) -->
+    <div id="shadowMain" style="
+      position:absolute;
+      width:120%;
+      height:120%;
+      top:-10%;
+      left:-10%;
+      border-radius:50%;
+      background:black;
+      opacity:0.85;
+      z-index:3;
+    "></div>
+
+    <div id="shadowSoft" style="
+      position:absolute;
+      width:126%;
+      height:126%;
+      top:-13%;
+      left:-13%;
+      border-radius:50%;
+      background:black;
+      opacity:0.2;
+      z-index:2;
+    "></div>
+
+  </div>
+
+  <!-- 🌙 EDGE GLOW (outside mask) -->
+  <div style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     pointer-events:none;
-    box-shadow: 0 0 4px rgba(255,255,255,0.08);
-    z-index:3;
+    box-shadow:0 0 4px rgba(255,255,255,0.08);
   "></div>
-
-  <!-- 🌑 EARTHSHINE -->
-  <div id="earthshine" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:white;
-    opacity:0;
-    mix-blend-mode:screen;
-    z-index:1;
-  "></div>
-
-  <!-- 🌗 SHADOW (semi-transparent) -->
-  <div id="shadowMain" class="shadow"></div>
-  <div id="shadowSoft" class="shadow soft"></div>
 
 </div>
 
@@ -70,26 +101,6 @@
   position:absolute;
   background:white;
   border-radius:50%;
-}
-
-.shadow{
-  position:absolute;
-  width:120%;
-  height:120%;
-  top:-10%;
-  left:-10%;
-  border-radius:50%;
-  background:black;
-  z-index:4;
-}
-
-#shadowMain{
-  opacity:0.85; /* not fully black */
-}
-
-#shadowSoft{
-  opacity:0.25;
-  transform:scale(1.02); /* slightly larger, same centre */
 }
 
 #ambient{
@@ -113,11 +124,11 @@ const moonSurface = document.getElementById("moonSurface");
 const skyWrap = document.getElementById("skyWrap");
 const ambient = document.getElementById("ambient");
 
-// ⭐ stars
-const starContainer = document.getElementById("stars");
+// ⭐ STARS
 const stars = [];
+const starContainer = document.getElementById("stars");
 
-for(let i=0;i<90;i++){
+for(let i=0;i<100;i++){
   const s = document.createElement("div");
   s.className = "star";
 
@@ -144,17 +155,17 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌗 shadow movement (same centre!)
+  // 🌗 shadow movement (CLIPPED INSIDE MOON)
   shadowMain.style.transform = `translateX(${offset}px)`;
   shadowSoft.style.transform = `translateX(${offset}px) scale(1.02)`;
 
-  // 🌙 rotation (VERY subtle)
+  // 🌙 rotation + tilt
   const rotation = angle * 0.1;
   const tilt = 12 + Math.sin(angle * 0.5) * 6;
 
   moonWrap.style.transform =
     `translate(-50%,-50%) rotate(${tilt}deg)`;
-    
+
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
@@ -170,10 +181,10 @@ function update(){
 
   const illum = (1 - Math.cos(angle)) / 2;
 
-  // 🌑 earthshine (visible through shadow)
+  // 🌑 earthshine
   earthshine.style.opacity = (1 - illum) * 0.08;
 
-  // 🌙 surface realism
+  // 🌙 realism
   moonSurface.style.filter =
     `contrast(${1 + illum * 0.25}) brightness(${0.9 + illum * 0.2})`;
 
