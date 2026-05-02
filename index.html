@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-<body style="
+<body id="sky" style="
   margin:0;
   background:black;
   height:100vh;
   overflow:hidden;
+  transition: background 10s linear;
 ">
 
 <div id="milkyway"></div>
@@ -108,7 +109,27 @@
 
 <script>
 
-// 🌙 Moon system
+// 🌌 SKY COLOUR CYCLE (very subtle)
+const sky = document.getElementById("sky");
+
+let skyPhase = 0;
+
+function updateSkyColor(){
+  skyPhase += 0.0005;
+
+  const r = 5 + Math.sin(skyPhase) * 5;
+  const g = 8 + Math.sin(skyPhase + 1) * 6;
+  const b = 15 + Math.sin(skyPhase + 2) * 10;
+
+  sky.style.background = `rgb(${r},${g},${b})`;
+
+  requestAnimationFrame(updateSkyColor);
+}
+
+updateSkyColor();
+
+
+// 🌙 (same moon system as before)
 let demo = true;
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 12000;
@@ -140,16 +161,15 @@ function updateMoon(){
 updateMoon();
 
 
-// 🌌 Milky Way (drifting WITH stars)
+// 🌌 milky way drift
 const milky = document.getElementById("milkyway");
-
 milky.style.background =
   "radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%)";
 
 let skyOffset = 0;
 
 
-// ⭐ Stars
+// ⭐ stars
 const starContainer = document.getElementById("stars");
 let stars = [];
 
@@ -174,11 +194,8 @@ for(let i=0;i<100;i++){
 
 function updateSky(){
 
-  // 🌌 shared drift (stars + milky way)
   skyOffset += 0.003;
-
-  milky.style.transform =
-    `translateX(${skyOffset}px)`;
+  milky.style.transform = `translateX(${skyOffset}px)`;
 
   for(let s of stars){
     s.x += 0.003;
