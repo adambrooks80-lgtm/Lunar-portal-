@@ -108,7 +108,7 @@
 
 <script>
 
-// 🌙 Moon (unchanged)
+// 🌙 Moon system
 let demo = true;
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 12000;
@@ -131,9 +131,8 @@ function updateMoon(){
   halo.style.transform = `translateX(${offset * 0.05}px)`;
 
   const tilt = Math.sin(angle * 0.5) * 8;
-  moonWrap.style.transform = `
-    translate(-50%,-50%) rotate(${12 + tilt}deg)
-  `;
+  moonWrap.style.transform =
+    `translate(-50%,-50%) rotate(${12 + tilt}deg)`;
 
   requestAnimationFrame(updateMoon);
 }
@@ -141,12 +140,16 @@ function updateMoon(){
 updateMoon();
 
 
-// 🌌 Milky way (unchanged)
-document.getElementById("milkyway").style.background =
+// 🌌 Milky Way (drifting WITH stars)
+const milky = document.getElementById("milkyway");
+
+milky.style.background =
   "radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%)";
 
+let skyOffset = 0;
 
-// ⭐ Stars (VERY slow drift)
+
+// ⭐ Stars
 const starContainer = document.getElementById("stars");
 let stars = [];
 
@@ -169,10 +172,15 @@ for(let i=0;i<100;i++){
   starContainer.appendChild(s);
 }
 
-function updateStars(){
-  for(let s of stars){
+function updateSky(){
 
-    // 🔥 MUCH slower drift (this is the key change)
+  // 🌌 shared drift (stars + milky way)
+  skyOffset += 0.003;
+
+  milky.style.transform =
+    `translateX(${skyOffset}px)`;
+
+  for(let s of stars){
     s.x += 0.003;
 
     if(s.x > window.innerWidth){
@@ -180,17 +188,16 @@ function updateStars(){
       s.y = Math.random()*window.innerHeight;
     }
 
-    // subtle twinkle
     s.style.opacity += (Math.random()-0.5)*0.01;
     s.style.opacity = Math.max(0.1, Math.min(0.6, s.style.opacity));
 
     s.style.left = s.x+"px";
   }
 
-  requestAnimationFrame(updateStars);
+  requestAnimationFrame(updateSky);
 }
 
-updateStars();
+updateSky();
 
 
 // 🌫️ haze
@@ -209,7 +216,7 @@ function updateHaze(){
 updateHaze();
 
 
-// ✨ shooting stars (unchanged)
+// ✨ shooting stars unchanged
 const shootingContainer = document.getElementById("shootingStars");
 
 function createShootingStar(){
