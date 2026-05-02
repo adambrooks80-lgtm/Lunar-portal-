@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
-<body id="sky" style="
+<body style="
   margin:0;
   background:black;
   height:100vh;
   overflow:hidden;
-  transition: background 10s linear;
 ">
 
-<div id="milkyway"></div>
-<div id="stars"></div>
+<div id="skyWrap">
+  <div id="milkyway"></div>
+  <div id="stars"></div>
+</div>
+
 <div id="haze"></div>
 <div id="shootingStars"></div>
 
@@ -22,22 +24,19 @@
   height:260px;
 ">
 
-  <div id="halo" style="
+  <!-- 🌙 EDGE GLOW (replaces halo) -->
+  <div style="
     position:absolute;
-    width:160%;
-    height:160%;
-    top:-30%;
-    left:-30%;
+    width:100%;
+    height:100%;
     border-radius:50%;
-    background: radial-gradient(
-      circle at center,
-      rgba(200,220,255,0.15),
-      rgba(200,220,255,0.05) 35%,
-      transparent 75%
-    );
-    filter: blur(25px);
+    box-shadow:
+      0 0 6px rgba(255,255,255,0.15),
+      0 0 12px rgba(255,255,255,0.08);
+    pointer-events:none;
   "></div>
 
+  <!-- 🌙 MOON -->
   <div style="
     position:absolute;
     width:100%;
@@ -48,6 +47,7 @@
     filter:hue-rotate(200deg) saturate(0.7);
   "></div>
 
+  <!-- 🌑 EARTHSHINE -->
   <div style="
     position:absolute;
     width:100%;
@@ -58,6 +58,7 @@
     opacity:0.08;
   "></div>
 
+  <!-- 🌗 TERMINATOR -->
   <div style="
     position:absolute;
     width:100%;
@@ -85,94 +86,60 @@
 </div>
 
 <style>
-#milkyway, #stars, #haze, #shootingStars {
+#skyWrap {
   position:absolute;
   width:100%;
   height:100%;
-  pointer-events:none;
 }
-
+#milkyway {
+  position:absolute;
+  width:100%;
+  height:100%;
+  background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%);
+}
+#stars {
+  position:absolute;
+  width:100%;
+  height:100%;
+}
 .star {
   position:absolute;
   background:white;
   border-radius:50%;
 }
-
+#haze, #shootingStars {
+  position:absolute;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
 .shooting-star {
   position:absolute;
   width:2px;
   height:2px;
   background:white;
-  box-shadow: 0 0 6px white;
+  box-shadow:0 0 6px white;
 }
 </style>
 
 <script>
 
-// 🌌 SKY COLOUR CYCLE (very subtle)
-const sky = document.getElementById("sky");
-
-let skyPhase = 0;
-
-function updateSkyColor(){
-  skyPhase += 0.0005;
-
-  const r = 5 + Math.sin(skyPhase) * 5;
-  const g = 8 + Math.sin(skyPhase + 1) * 6;
-  const b = 15 + Math.sin(skyPhase + 2) * 10;
-
-  sky.style.background = `rgb(${r},${g},${b})`;
-
-  requestAnimationFrame(updateSkyColor);
-}
-
-updateSkyColor();
-
-
-// 🌙 (same moon system as before)
+// 🌙 MASTER CLOCK
 let demo = true;
 const realCycle = 29.53 * 24 * 60 * 60 * 1000;
 const demoCycle = 12000;
-const newMoon = new Date("2000-01-06T18:14:00Z").getTime();
+
+const cycle = demo ? demoCycle : realCycle;
+const start = Date.now();
 
 const mask = document.getElementById("mask");
-const halo = document.getElementById("halo");
 const moonWrap = document.getElementById("moonWrap");
+const skyWrap = document.getElementById("skyWrap");
 
-function updateMoon(){
-  const now = Date.now();
-  const cycle = demo ? demoCycle : realCycle;
-
-  const phase = ((now - newMoon) % cycle) / cycle;
-  const angle = phase * Math.PI * 2;
-
-  const offset = Math.cos(angle) * 260;
-
-  mask.style.transform = `translateX(${offset}px)`;
-  halo.style.transform = `translateX(${offset * 0.05}px)`;
-
-  const tilt = Math.sin(angle * 0.5) * 8;
-  moonWrap.style.transform =
-    `translate(-50%,-50%) rotate(${12 + tilt}deg)`;
-
-  requestAnimationFrame(updateMoon);
-}
-
-updateMoon();
-
-
-// 🌌 milky way drift
-const milky = document.getElementById("milkyway");
-milky.style.background =
-  "radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%)";
-
-let skyOffset = 0;
-
+const stars = [];
+const starContainer = document.getElementById("stars");
 
 // ⭐ stars
-const starContainer = document.getElementById("stars");
-let stars = [];
-
 for(let i=0;i<100;i++){
   const s = document.createElement("div");
   const size = Math.random()*1.8 + 0.4;
@@ -192,29 +159,31 @@ for(let i=0;i<100;i++){
   starContainer.appendChild(s);
 }
 
-function updateSky(){
+function update(){
 
-  skyOffset += 0.003;
-  milky.style.transform = `translateX(${skyOffset}px)`;
+  const elapsed = Date.now() - start;
+  const phase = (elapsed % cycle) / cycle;
+  const angle = phase * Math.PI * 2;
+
+  const offset = Math.cos(angle) * 260;
+  mask.style.transform = `translateX(${offset}px)`;
+
+  const tilt = Math.sin(angle * 0.5) * 8;
+  moonWrap.style.transform =
+    `translate(-50%,-50%) rotate(${12 + tilt}deg)`;
+
+  skyWrap.style.transform =
+    `rotate(${phase * 360}deg)`;
 
   for(let s of stars){
-    s.x += 0.003;
-
-    if(s.x > window.innerWidth){
-      s.x = 0;
-      s.y = Math.random()*window.innerHeight;
-    }
-
     s.style.opacity += (Math.random()-0.5)*0.01;
     s.style.opacity = Math.max(0.1, Math.min(0.6, s.style.opacity));
-
-    s.style.left = s.x+"px";
   }
 
-  requestAnimationFrame(updateSky);
+  requestAnimationFrame(update);
 }
 
-updateSky();
+update();
 
 
 // 🌫️ haze
@@ -233,7 +202,7 @@ function updateHaze(){
 updateHaze();
 
 
-// ✨ shooting stars unchanged
+// ✨ shooting stars
 const shootingContainer = document.getElementById("shootingStars");
 
 function createShootingStar(){
