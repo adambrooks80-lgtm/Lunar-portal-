@@ -11,8 +11,6 @@
   <div id="stars"></div>
 </div>
 
-<div id="ambient"></div>
-
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -30,13 +28,22 @@
     overflow:hidden;
   ">
 
-    <!-- MOON -->
+    <!-- 🌙 MOON SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
       height:100%;
       background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
       background-size:cover;
+    "></div>
+
+    <!-- 🌙 LIMB LIGHT (CORRECT WAY) -->
+    <div id="limbLight" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      pointer-events:none;
     "></div>
 
     <!-- 🌗 TRANSITION BAND -->
@@ -48,25 +55,10 @@
       left:-10%;
       border-radius:50%;
       background:black;
-      opacity:0.35;
+      opacity:0.25;
     "></div>
 
-    <!-- 🌗 NOISE OVERLAY (NEW) -->
-    <div id="terminatorNoise" style="
-      position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
-      border-radius:50%;
-      opacity:0.12;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-      background-size:4px 4px;
-      mix-blend-mode:overlay;
-    "></div>
-
-    <!-- SHADOW -->
+    <!-- 🌗 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -91,13 +83,6 @@
   background:white;
   border-radius:50%;
 }
-
-#ambient{
-  position:absolute;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-}
 </style>
 
 <script>
@@ -107,10 +92,9 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const terminatorBand = document.getElementById("terminatorBand");
-const terminatorNoise = document.getElementById("terminatorNoise");
-
-const moonWrap = document.getElementById("moonWrap");
+const limbLight = document.getElementById("limbLight");
 const moonSurface = document.getElementById("moonSurface");
+const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 
 // ⭐ stars
@@ -148,15 +132,11 @@ function update(){
   // 🌗 shadow
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌗 band
-  terminatorBand.style.transform = `translateX(${offset + 6}px)`;
+  // 🌗 transition (slightly offset)
+  terminatorBand.style.transform = `translateX(${offset + 5}px)`;
 
-  // 🌗 noise (slight drift for life)
-  terminatorNoise.style.transform =
-    `translateX(${offset + 6}px) translateY(${Math.sin(elapsed * 0.001) * 2}px)`;
-
-  // 🌙 rotation
-  const rotation = elapsed * 0.00002;
+  // 🌙 subtle libration (not rotation)
+  const rotation = Math.sin(elapsed * 0.00005) * 5;
   const tilt = 12 + Math.sin(angle * 0.5) * 6;
 
   moonWrap.style.transform =
@@ -168,6 +148,22 @@ function update(){
   // 🌌 sky
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
+
+  const illum = (1 - Math.cos(angle)) / 2;
+
+  // 🌙 LIMB LIGHT (very subtle radial falloff)
+  limbLight.style.background = `
+    radial-gradient(circle,
+      rgba(255,255,255,${illum * 0.12}) 0%,
+      rgba(255,255,255,${illum * 0.06}) 40%,
+      rgba(255,255,255,${illum * 0.02}) 65%,
+      transparent 100%
+    )
+  `;
+
+  // 🌙 surface realism
+  moonSurface.style.filter =
+    `contrast(${1 + illum * 0.25}) brightness(${0.9 + illum * 0.2})`;
 
   requestAnimationFrame(update);
 }
