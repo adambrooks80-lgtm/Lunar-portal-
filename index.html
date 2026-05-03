@@ -37,7 +37,7 @@
       background-size:cover;
     "></div>
 
-    <!-- 🌗 SINGLE CLEAN SHADOW -->
+    <!-- 🌗 CORRECT SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:115%;
@@ -46,11 +46,11 @@
       left:-7.5%;
       border-radius:50%;
       background: radial-gradient(circle,
-        rgba(0,0,0,0) 47%,
-        rgba(0,0,0,0.2) 50%,
-        rgba(0,0,0,0.45) 55%,
-        rgba(0,0,0,0.7) 65%,
-        rgba(0,0,0,0.9) 100%
+        rgba(0,0,0,0.95) 0%,
+        rgba(0,0,0,0.75) 40%,
+        rgba(0,0,0,0.45) 65%,
+        rgba(0,0,0,0.2) 80%,
+        rgba(0,0,0,0) 92%
       );
     "></div>
 
@@ -106,15 +106,15 @@ function update(){
   const angle = phase * Math.PI * 2;
 
   const moonRadius = 130;
-  const shadowRadius = 150; // reduced
+  const shadowRadius = 150;
   const travel = moonRadius + shadowRadius;
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌗 shadow
+  // 🌗 SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 libration
+  // 🌙 subtle libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
