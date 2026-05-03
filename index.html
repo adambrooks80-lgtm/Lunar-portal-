@@ -40,7 +40,7 @@
       background-size:cover;
     "></div>
 
-    <!-- 🌗 TRANSITION BAND (aligned) -->
+    <!-- 🌗 SOFT TERMINATOR (NEW APPROACH) -->
     <div id="terminatorBand" style="
       position:absolute;
       width:120%;
@@ -48,8 +48,13 @@
       top:-10%;
       left:-10%;
       border-radius:50%;
-      background:black;
-      opacity:0.18;
+      background: radial-gradient(circle,
+        rgba(0,0,0,0) 60%,
+        rgba(0,0,0,0.25) 70%,
+        rgba(0,0,0,0.45) 80%,
+        rgba(0,0,0,0.6) 90%,
+        rgba(0,0,0,0.75) 100%
+      );
     "></div>
 
     <!-- 🌗 MAIN SHADOW -->
@@ -61,7 +66,7 @@
       left:-10%;
       border-radius:50%;
       background:black;
-      opacity:0.75;
+      opacity:0.7;
     "></div>
 
   </div>
@@ -131,11 +136,11 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌗 SHADOW + TRANSITION (NOW PERFECTLY ALIGNED)
+  // 🌗 PERFECTLY ALIGNED
   shadowMain.style.transform = `translateX(${offset}px)`;
   terminatorBand.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 subtle libration (not spinning)
+  // 🌙 subtle libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
@@ -145,7 +150,7 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
-  // 🌌 sky drift
+  // 🌌 sky
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
