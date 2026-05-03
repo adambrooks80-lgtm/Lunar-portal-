@@ -7,12 +7,10 @@
   overflow:hidden;
 ">
 
-<!-- SKY -->
 <div id="skyWrap">
   <div id="stars"></div>
 </div>
 
-<!-- MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -22,7 +20,6 @@
   height:260px;
 ">
 
-  <!-- CLIPPED MOON -->
   <div style="
     position:absolute;
     width:100%;
@@ -31,7 +28,7 @@
     overflow:hidden;
   ">
 
-    <!-- 🌙 MOON TEXTURE -->
+    <!-- 🌙 MOON -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -40,20 +37,20 @@
       background-size:cover;
     "></div>
 
-    <!-- 🌗 SOFT TERMINATOR (NEW APPROACH) -->
+    <!-- 🌗 SOFT EDGE (KEY CHANGE) -->
     <div id="terminatorBand" style="
       position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
+      width:140%;
+      height:140%;
+      top:-20%;
+      left:-20%;
       border-radius:50%;
       background: radial-gradient(circle,
-        rgba(0,0,0,0) 60%,
-        rgba(0,0,0,0.25) 70%,
-        rgba(0,0,0,0.45) 80%,
-        rgba(0,0,0,0.6) 90%,
-        rgba(0,0,0,0.75) 100%
+        rgba(0,0,0,0) 48%,
+        rgba(0,0,0,0.15) 52%,
+        rgba(0,0,0,0.35) 60%,
+        rgba(0,0,0,0.6) 75%,
+        rgba(0,0,0,0.85) 100%
       );
     "></div>
 
@@ -66,7 +63,7 @@
       left:-10%;
       border-radius:50%;
       background:black;
-      opacity:0.7;
+      opacity:0.65;
     "></div>
 
   </div>
@@ -136,11 +133,11 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌗 PERFECTLY ALIGNED
+  // 🌗 aligned
   shadowMain.style.transform = `translateX(${offset}px)`;
   terminatorBand.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 subtle libration
+  // 🌙 libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
