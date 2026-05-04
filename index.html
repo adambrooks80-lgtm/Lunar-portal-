@@ -40,30 +40,6 @@
       z-index:1;
     "></div>
 
-    <!-- 🌙 EDGE SOFTEN (now follows shadow) -->
-    <div id="edgeSoften" style="
-      position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
-      border-radius:50%;
-      pointer-events:none;
-      z-index:2;
-
-      -webkit-mask-image: radial-gradient(circle,
-        rgba(0,0,0,0) 82%,
-        rgba(0,0,0,1) 90%,
-        rgba(0,0,0,1) 100%
-      );
-
-      mask-image: radial-gradient(circle,
-        rgba(0,0,0,0) 82%,
-        rgba(0,0,0,1) 90%,
-        rgba(0,0,0,1) 100%
-      );
-    "></div>
-
     <!-- 🌑 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
@@ -73,7 +49,7 @@
       left:-10%;
       border-radius:50%;
       background:black;
-      z-index:3;
+      z-index:2;
 
       -webkit-mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
@@ -121,7 +97,6 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const moonSurface = document.getElementById("moonSurface");
-const edgeSoften = document.getElementById("edgeSoften");
 
 // ⭐ stars
 const starContainer = document.getElementById("stars");
@@ -157,22 +132,20 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌑 move shadow
+  // 🌑 shadow movement
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 move soften WITH shadow (critical fix)
-  edgeSoften.style.transform = `translateX(${offset}px)`;
-
-  // 🌙 surface tuning
+  // 🌙 surface brightness
   moonSurface.style.filter =
     `brightness(${0.95 + illum * 0.2}) contrast(1.04)`;
 
-  // 🌙 ultra-thin inward softening
-  edgeSoften.style.background = `
+  // 🌙 VERY SUBTLE edge imperfection (critical)
+  moonSurface.style.maskImage = `
     radial-gradient(circle,
-      rgba(0,0,0,0) 85%,
-      rgba(0,0,0,0.08) 92%,
-      rgba(0,0,0,0.14) 100%
+      rgba(0,0,0,1) 97.5%,
+      rgba(0,0,0,0.99) 98.5%,
+      rgba(0,0,0,0.97) 99.5%,
+      rgba(0,0,0,0.94) 100%
     )
   `;
 
