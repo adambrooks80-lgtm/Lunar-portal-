@@ -20,17 +20,16 @@
   height:260px;
 ">
 
-  <!-- 🌌 REALISTIC ATMOSPHERE (IMAGE BASED) -->
-  <div id="moonAtmosphere" style="
+  <!-- 🌙 BLOOM LAYER (KEY PART) -->
+  <div id="moonBloom" style="
     position:absolute;
-    width:350%;
-    height:350%;
-    top:-125%;
-    left:-125%;
-    background:url('https://www.transparenttextures.com/patterns/foggy-birds.png');
-    background-size:600px;
-    opacity:0.15;
-    filter:blur(40px);
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
+    filter:blur(2px);
+    opacity:0.25;
     pointer-events:none;
     z-index:0;
   "></div>
@@ -43,6 +42,7 @@
     overflow:hidden;
   ">
 
+    <!-- 🌙 SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -52,6 +52,17 @@
       z-index:1;
     "></div>
 
+    <!-- 🌙 DEPTH -->
+    <div id="moonDepth" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      pointer-events:none;
+      z-index:2;
+    "></div>
+
+    <!-- 🌑 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -60,20 +71,24 @@
       left:-10%;
       border-radius:50%;
       background:black;
-      z-index:2;
+      z-index:3;
 
       -webkit-mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.8) 55%,
-        rgba(0,0,0,0.3) 60%,
-        rgba(0,0,0,0) 65%
+        rgba(0,0,0,0.9) 52%,
+        rgba(0,0,0,0.6) 54%,
+        rgba(0,0,0,0.25) 56%,
+        rgba(0,0,0,0.08) 58%,
+        rgba(0,0,0,0) 60%
       );
 
       mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.8) 55%,
-        rgba(0,0,0,0.3) 60%,
-        rgba(0,0,0,0) 65%
+        rgba(0,0,0,0.9) 52%,
+        rgba(0,0,0,0.6) 54%,
+        rgba(0,0,0,0.25) 56%,
+        rgba(0,0,0,0.08) 58%,
+        rgba(0,0,0,0) 60%
       );
     "></div>
 
@@ -99,7 +114,10 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const moonSurface = document.getElementById("moonSurface");
+const moonDepth = document.getElementById("moonDepth");
+const moonBloom = document.getElementById("moonBloom");
 
+// stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -133,10 +151,24 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
+  // shadow movement
   shadowMain.style.transform = `translateX(${offset}px)`;
 
+  // surface
   moonSurface.style.filter =
-    `brightness(${0.95 + illum * 0.2}) contrast(1.05)`;
+    `brightness(${0.92 + illum * 0.15}) contrast(1.02)`;
+
+  // depth
+  moonDepth.style.background = `
+    radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,${0.05 * illum}) 0%,
+      rgba(255,255,255,${0.02 * illum}) 40%,
+      rgba(0,0,0,0.12) 100%
+    )
+  `;
+
+  // 🌙 BLOOM STRENGTH (subtle)
+  moonBloom.style.opacity = 0.15 + illum * 0.2;
 
   requestAnimationFrame(update);
 }
