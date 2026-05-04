@@ -47,27 +47,44 @@
       left:-5%;
       border-radius:50%;
       background:black;
-      opacity:0.92;
+      opacity:0.9;
       z-index:2;
     "></div>
 
-    <!-- 🌗 TERMINATOR (LIGHTER + READABLE) -->
+    <!-- 🌗 TERMINATOR (SOFTER + SHALLOW) -->
     <div id="terminatorBand" style="
       position:absolute;
-      width:115%;
-      height:115%;
-      top:-7.5%;
-      left:-7.5%;
+      width:120%;
+      height:120%;
+      top:-10%;
+      left:-10%;
       border-radius:50%;
       z-index:3;
       background: radial-gradient(circle,
-        rgba(0,0,0,0) 48%,
-        rgba(0,0,0,0.12) 52%,
-        rgba(0,0,0,0.25) 56%,
-        rgba(0,0,0,0.4) 60%,
-        rgba(0,0,0,0.6) 64%,
-        rgba(0,0,0,0.8) 68%
+        rgba(0,0,0,0) 45%,
+        rgba(0,0,0,0.08) 50%,
+        rgba(0,0,0,0.18) 55%,
+        rgba(0,0,0,0.32) 60%,
+        rgba(0,0,0,0.5) 66%,
+        rgba(0,0,0,0.7) 72%
       );
+    "></div>
+
+    <!-- 🌙 EDGE BREAKUP (MORE VISIBLE BUT NATURAL) -->
+    <div id="edgeNoise" style="
+      position:absolute;
+      width:120%;
+      height:120%;
+      top:-10%;
+      left:-10%;
+      border-radius:50%;
+      pointer-events:none;
+      z-index:4;
+      opacity:0.12;
+      mix-blend-mode:overlay;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px);
+      background-size:3px 3px;
     "></div>
 
   </div>
@@ -92,6 +109,7 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const terminatorBand = document.getElementById("terminatorBand");
+const edgeNoise = document.getElementById("edgeNoise");
 const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
@@ -128,11 +146,13 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // movement
   shadowMain.style.transform = `translateX(${offset}px)`;
   terminatorBand.style.transform = `translateX(${offset}px)`;
 
-  // libration
+  // subtle noise drift (breaks perfection)
+  edgeNoise.style.transform =
+    `translateX(${offset}px) translateY(${Math.sin(elapsed*0.002)*2}px)`;
+
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
@@ -142,7 +162,6 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
-  // sky
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
