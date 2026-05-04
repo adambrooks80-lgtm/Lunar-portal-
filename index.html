@@ -7,13 +7,11 @@
   overflow:hidden;
 ">
 
-<!-- 🌌 SKY -->
 <div id="skyWrap">
   <div id="stars"></div>
   <div id="moonGlowStatic"></div>
 </div>
 
-<!-- 🌙 MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -31,7 +29,6 @@
     overflow:hidden;
   ">
 
-    <!-- SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -41,7 +38,6 @@
       z-index:1;
     "></div>
 
-    <!-- DEPTH -->
     <div id="moonDepth" style="
       position:absolute;
       width:100%;
@@ -51,7 +47,6 @@
       z-index:2;
     "></div>
 
-    <!-- SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -86,24 +81,15 @@
 </div>
 
 <style>
-
-#skyWrap{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
-
-#stars{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
+#skyWrap{ position:absolute; width:100%; height:100%; }
+#stars{ position:absolute; width:100%; height:100%; }
 
 #moonGlowStatic{
   position:absolute;
   width:100%;
   height:100%;
   pointer-events:none;
+  mix-blend-mode:screen;
 }
 
 .star{
@@ -111,7 +97,6 @@
   background:white;
   border-radius:50%;
 }
-
 </style>
 
 <script>
@@ -124,7 +109,7 @@ const moonDepth = document.getElementById("moonDepth");
 const moonSurface = document.getElementById("moonSurface");
 const moonGlowStatic = document.getElementById("moonGlowStatic");
 
-// ⭐ stars
+// stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -158,10 +143,9 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌑 SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 DEPTH
+  // depth
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
       rgba(255,255,255,${0.05 * illum}) 0%,
@@ -170,17 +154,25 @@ function update(){
     )
   `;
 
-  // 🌙 SURFACE
   moonSurface.style.filter =
     `brightness(${0.9 + illum * 0.18}) contrast(1.08)`;
 
-  // 🌌 GLOW (STRONGER, STILL NO RING)
+  // ✨ BROKEN SYMMETRY GLOW + NOISE
   moonGlowStatic.style.background = `
-    radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,${0.07 * illum}) 22%,
-      rgba(255,255,255,${0.04 * illum}) 45%,
-      rgba(255,255,255,0) 90%
+    radial-gradient(circle at 52% 48%,
+      rgba(255,255,255,${0.08 * illum}) 0%,
+      rgba(255,255,255,${0.04 * illum}) 30%,
+      rgba(255,255,255,0) 75%
+    ),
+    radial-gradient(circle at 48% 52%,
+      rgba(255,255,255,${0.06 * illum}) 0%,
+      rgba(255,255,255,${0.03 * illum}) 35%,
+      rgba(255,255,255,0) 80%
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.01) 0px,
+      transparent 2px
     )
   `;
 
