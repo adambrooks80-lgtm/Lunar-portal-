@@ -48,7 +48,7 @@
       z-index:2;
     "></div>
 
-    <!-- ✨ TERMINATOR EDGE LIFT -->
+    <!-- ✨ EDGE LIFT (STRONG VERSION) -->
     <div id="edgeLift" style="
       position:absolute;
       width:100%;
@@ -117,7 +117,7 @@ const edgeLift = document.getElementById("edgeLift");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 
-// ⭐ stars
+// stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -151,10 +151,9 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌑 SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 DEPTH
+  // depth
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
       rgba(255,255,255,${0.05 * illum}) 0%,
@@ -163,30 +162,25 @@ function update(){
     )
   `;
 
-  // 🌙 SURFACE PRESENCE
   moonSurface.style.filter =
     `brightness(${0.9 + illum * 0.18}) contrast(1.08)`;
 
-  // ✨ TERMINATOR EDGE LIFT (IMPROVED VERSION)
+  // 🔥 STRONG EDGE LIFT
   const edgeStrength = Math.pow(Math.sin(angle), 2);
 
-  edgeLift.style.opacity = 0.18 * edgeStrength;
+  edgeLift.style.opacity = 0.4 * edgeStrength;
 
   edgeLift.style.background = `
     radial-gradient(circle,
-      rgba(255,255,255,0.35) 47%,
-      rgba(255,255,255,0.18) 49%,
-      rgba(255,255,255,0.08) 51%,
-      rgba(255,255,255,0.02) 53%,
-      rgba(255,255,255,0) 56%
+      rgba(255,255,255,0.8) 46%,
+      rgba(255,255,255,0.5) 48%,
+      rgba(255,255,255,0.25) 50%,
+      rgba(255,255,255,0.08) 53%,
+      rgba(255,255,255,0) 58%
     )
   `;
 
-  // 🌙 subtle drift (break perfection)
-  edgeLift.style.transform =
-    `translate(${Math.sin(elapsed*0.001)*1.2}px, ${Math.cos(elapsed*0.001)*1.2}px)`;
-
-  // 🌙 MOON MOTION
+  // motion
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
@@ -196,7 +190,6 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
-  // 🌌 SKY
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
