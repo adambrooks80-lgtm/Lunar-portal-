@@ -37,24 +37,25 @@
       background-size:cover;
     "></div>
 
-    <!-- 🌗 SOFT EDGE -->
+    <!-- 🌗 TERMINATOR (CORRECTED) -->
     <div id="terminatorBand" style="
       position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
+      width:115%;
+      height:115%;
+      top:-7.5%;
+      left:-7.5%;
       border-radius:50%;
       background: radial-gradient(circle,
-        rgba(0,0,0,0) 50%,
-        rgba(0,0,0,0.3) 54%,
-        rgba(0,0,0,0.6) 60%,
-        rgba(0,0,0,0.85) 68%,
-        rgba(0,0,0,1) 76%
+        rgba(0,0,0,1) 48%,
+        rgba(0,0,0,0.9) 52%,
+        rgba(0,0,0,0.6) 56%,
+        rgba(0,0,0,0.3) 60%,
+        rgba(0,0,0,0.1) 63%,
+        rgba(0,0,0,0) 66%
       );
     "></div>
 
-    <!-- 🌑 STRONG SHADOW -->
+    <!-- 🌑 SOLID SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:110%;
@@ -64,6 +65,22 @@
       border-radius:50%;
       background:black;
       opacity:0.97;
+    "></div>
+
+    <!-- 🌙 NOISE (VERY SUBTLE EDGE BREAKUP) -->
+    <div id="edgeNoise" style="
+      position:absolute;
+      width:120%;
+      height:120%;
+      top:-10%;
+      left:-10%;
+      border-radius:50%;
+      pointer-events:none;
+      opacity:0.08;
+      mix-blend-mode:overlay;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+      background-size:3px 3px;
     "></div>
 
   </div>
@@ -88,6 +105,7 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const terminatorBand = document.getElementById("terminatorBand");
+const edgeNoise = document.getElementById("edgeNoise");
 const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
@@ -127,10 +145,14 @@ function update(){
   // 🌑 shadow
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌗 edge
+  // 🌗 terminator
   terminatorBand.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 subtle libration
+  // 🌙 noise slight drift (breaks perfection)
+  edgeNoise.style.transform =
+    `translateX(${offset}px) translateY(${Math.sin(elapsed*0.001)*2}px)`;
+
+  // 🌙 libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
