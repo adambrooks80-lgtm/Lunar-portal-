@@ -7,13 +7,11 @@
   overflow:hidden;
 ">
 
-<!-- 🌌 SKY -->
 <div id="skyWrap">
   <div id="stars"></div>
   <div id="ambientGlow"></div>
 </div>
 
-<!-- 🌙 MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -163,22 +161,22 @@ function update(){
   // 🌙 DEPTH
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,${0.05 * illum}) 0%,
-      rgba(255,255,255,${0.02 * illum}) 40%,
-      rgba(0,0,0,${0.1}) 100%
+      rgba(255,255,255,${0.06 * illum}) 0%,
+      rgba(255,255,255,${0.03 * illum}) 40%,
+      rgba(0,0,0,0.1) 100%
     )
   `;
 
-  // 🌙 SURFACE PRESENCE
+  // 🌙 SURFACE
   moonSurface.style.filter =
     `brightness(${0.92 + illum * 0.12}) contrast(1.05)`;
 
-  // 🌌 AMBIENT GLOW (VERY SUBTLE)
+  // 🌌 BOOSTED AMBIENT (THIS IS THE CHANGE)
   ambientGlow.style.background = `
     radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,${0.025 * illum}) 0%,
-      rgba(255,255,255,${0.01 * illum}) 25%,
-      rgba(255,255,255,0) 60%
+      rgba(255,255,255,${0.06 * illum}) 0%,
+      rgba(255,255,255,${0.03 * illum}) 30%,
+      rgba(255,255,255,0) 75%
     )
   `;
 
