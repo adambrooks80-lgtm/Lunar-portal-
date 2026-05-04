@@ -158,10 +158,10 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌑 shadow movement
+  // 🌑 SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 depth (subtle sphere feel)
+  // 🌙 DEPTH
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
       rgba(255,255,255,${0.05 * illum}) 0%,
@@ -170,17 +170,17 @@ function update(){
     )
   `;
 
-  // 🌙 surface brightness
+  // 🌙 SURFACE
   moonSurface.style.filter =
     `brightness(${0.9 + illum * 0.18}) contrast(1.08)`;
 
-  // 🌌 STATIC GLOW (corrected — no ring)
+  // 🌌 GLOW (STRONGER, STILL NO RING)
   moonGlowStatic.style.background = `
     radial-gradient(circle at 50% 50%,
       rgba(255,255,255,0) 0%,
-      rgba(255,255,255,${0.035 * illum}) 18%,
-      rgba(255,255,255,${0.02 * illum}) 40%,
-      rgba(255,255,255,0) 80%
+      rgba(255,255,255,${0.07 * illum}) 22%,
+      rgba(255,255,255,${0.04 * illum}) 45%,
+      rgba(255,255,255,0) 90%
     )
   `;
 
