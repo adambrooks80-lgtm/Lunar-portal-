@@ -12,7 +12,7 @@
   <div id="stars"></div>
 </div>
 
-<!-- 🌙 MOON -->
+<!-- 🌙 MOON WRAP -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -21,6 +21,20 @@
   width:260px;
   height:260px;
 ">
+
+  <!-- ⚪ TEST HALO (behind moon, above stars) -->
+  <div id="testHalo" style="
+    position:absolute;
+    width:120%;
+    height:120%;
+    top:-10%;
+    left:-10%;
+    border-radius:50%;
+    background:white;
+    opacity:0.5;
+    pointer-events:none;
+    z-index:0;
+  "></div>
 
   <div style="
     position:absolute;
@@ -71,17 +85,8 @@
 </div>
 
 <style>
-#skyWrap{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
-
-#stars{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
+#skyWrap{ position:absolute; width:100%; height:100%; }
+#stars{ position:absolute; width:100%; height:100%; }
 
 .star{
   position:absolute;
@@ -135,19 +140,9 @@ function update(){
   // 🌑 shadow movement
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 surface brightness
+  // 🌙 brightness
   moonSurface.style.filter =
     `brightness(${0.95 + illum * 0.2}) contrast(1.04)`;
-
-  // 🌙 VERY SUBTLE edge imperfection (critical)
-  moonSurface.style.maskImage = `
-    radial-gradient(circle,
-      rgba(0,0,0,1) 97.5%,
-      rgba(0,0,0,0.99) 98.5%,
-      rgba(0,0,0,0.97) 99.5%,
-      rgba(0,0,0,0.94) 100%
-    )
-  `;
 
   requestAnimationFrame(update);
 }
