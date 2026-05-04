@@ -28,16 +28,27 @@
     overflow:hidden;
   ">
 
-    <!-- 🌙 MOON -->
+    <!-- 🌙 MOON SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
       height:100%;
       background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
       background-size:cover;
+      z-index:1;
     "></div>
 
-    <!-- 🌑 SHADOW WITH CLEAN SOFT EDGE -->
+    <!-- 🌙 INTERNAL DEPTH (THIS IS THE KEY ADDITION) -->
+    <div id="moonDepth" style="
+      position:absolute;
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      pointer-events:none;
+      z-index:2;
+    "></div>
+
+    <!-- 🌑 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -46,6 +57,7 @@
       left:-10%;
       border-radius:50%;
       background:black;
+      z-index:3;
 
       -webkit-mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
@@ -64,22 +76,6 @@
         rgba(0,0,0,0.08) 58%,
         rgba(0,0,0,0) 60%
       );
-    "></div>
-
-    <!-- 🌙 VERY SUBTLE EDGE BREAKUP (NON-RADIAL) -->
-    <div id="edgeNoise" style="
-      position:absolute;
-      width:100%;
-      height:100%;
-      pointer-events:none;
-      mix-blend-mode:overlay;
-      opacity:0.06;
-      background-image:
-        linear-gradient(45deg,
-          rgba(255,255,255,0.2) 1px,
-          transparent 1px
-        );
-      background-size:4px 4px;
     "></div>
 
   </div>
@@ -103,7 +99,7 @@ const cycle = 12000;
 const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
-const edgeNoise = document.getElementById("edgeNoise");
+const moonDepth = document.getElementById("moonDepth");
 const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
@@ -134,6 +130,8 @@ function update(){
   const phase = (elapsed % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
+  const illum = (1 - Math.cos(angle)) / 2; // 0 → 1
+
   const moonRadius = 130;
   const shadowRadius = 150;
   const travel = moonRadius + shadowRadius;
@@ -142,9 +140,18 @@ function update(){
 
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // subtle drift so pattern isn't static
-  edgeNoise.style.transform =
-    `translate(${Math.sin(elapsed*0.001)*2}px, ${Math.cos(elapsed*0.001)*2}px)`;
+  // 🌙 INTERNAL DEPTH (SUBTLE SPHERE EFFECT)
+  moonDepth.style.background = `
+    radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,${0.06 * illum}) 0%,
+      rgba(255,255,255,${0.03 * illum}) 40%,
+      rgba(0,0,0,${0.08 + (1 - illum)*0.08}) 100%
+    )
+  `;
+
+  // 🌙 very subtle presence shift
+  moonSurface.style.filter =
+    `brightness(${0.92 + illum * 0.12}) contrast(1.05)`;
 
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
