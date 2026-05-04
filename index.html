@@ -20,21 +20,6 @@
   height:260px;
 ">
 
-  <!-- 🌙 EDGE BLEED (iPhone tuned) -->
-  <div id="moonEdgeGlow" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-    background-size:cover;
-    filter:blur(1.8px) brightness(2);
-    opacity:0.22;
-    mix-blend-mode:screen;
-    pointer-events:none;
-    z-index:0;
-  "></div>
-
   <div style="
     position:absolute;
     width:100%;
@@ -53,8 +38,8 @@
       z-index:1;
     "></div>
 
-    <!-- 🌙 DEPTH -->
-    <div id="moonDepth" style="
+    <!-- 🌙 EDGE SOFTEN (INWARD ONLY) -->
+    <div id="edgeSoften" style="
       position:absolute;
       width:100%;
       height:100%;
@@ -76,16 +61,16 @@
 
       -webkit-mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.85) 53%,
-        rgba(0,0,0,0.4) 57%,
-        rgba(0,0,0,0) 62%
+        rgba(0,0,0,0.85) 54%,
+        rgba(0,0,0,0.4) 58%,
+        rgba(0,0,0,0) 63%
       );
 
       mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.85) 53%,
-        rgba(0,0,0,0.4) 57%,
-        rgba(0,0,0,0) 62%
+        rgba(0,0,0,0.85) 54%,
+        rgba(0,0,0,0.4) 58%,
+        rgba(0,0,0,0) 63%
       );
     "></div>
 
@@ -111,8 +96,7 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const moonSurface = document.getElementById("moonSurface");
-const moonDepth = document.getElementById("moonDepth");
-const moonEdgeGlow = document.getElementById("moonEdgeGlow");
+const edgeSoften = document.getElementById("edgeSoften");
 
 // stars
 const starContainer = document.getElementById("stars");
@@ -155,17 +139,15 @@ function update(){
   moonSurface.style.filter =
     `brightness(${0.95 + illum * 0.2}) contrast(1.04)`;
 
-  // depth
-  moonDepth.style.background = `
-    radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,${0.06 * illum}) 0%,
-      rgba(255,255,255,${0.025 * illum}) 40%,
-      rgba(0,0,0,0.12) 100%
+  // 🌙 inward edge softening ONLY
+  edgeSoften.style.background = `
+    radial-gradient(circle,
+      rgba(0,0,0,0) 70%,
+      rgba(0,0,0,0.12) 78%,
+      rgba(0,0,0,0.22) 85%,
+      rgba(0,0,0,0.3) 100%
     )
   `;
-
-  // edge glow (visible on iPhone)
-  moonEdgeGlow.style.opacity = 0.18 + illum * 0.2;
 
   requestAnimationFrame(update);
 }
