@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
-<body style="margin:0;background:black;height:100vh;overflow:hidden;">
+<body style="
+  margin:0;
+  background:#030305;
+  height:100vh;
+  overflow:hidden;
+">
 
 <div id="skyWrap">
   <div id="stars"></div>
@@ -15,7 +20,7 @@
   height:260px;
 ">
 
-  <!-- 🌙 EDGE BLEED (NEW APPROACH) -->
+  <!-- 🌙 EDGE BLEED (iPhone tuned) -->
   <div id="moonEdgeGlow" style="
     position:absolute;
     width:100%;
@@ -23,8 +28,8 @@
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    filter:blur(1.2px) brightness(1.4);
-    opacity:0.12;
+    filter:blur(1.8px) brightness(2);
+    opacity:0.22;
     mix-blend-mode:screen;
     pointer-events:none;
     z-index:0;
@@ -38,6 +43,7 @@
     overflow:hidden;
   ">
 
+    <!-- 🌙 SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -47,6 +53,7 @@
       z-index:1;
     "></div>
 
+    <!-- 🌙 DEPTH -->
     <div id="moonDepth" style="
       position:absolute;
       width:100%;
@@ -56,6 +63,7 @@
       z-index:2;
     "></div>
 
+    <!-- 🌑 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -63,7 +71,7 @@
       top:-10%;
       left:-10%;
       border-radius:50%;
-      background:#020203;
+      background:black;
       z-index:3;
 
       -webkit-mask-image: radial-gradient(circle,
@@ -145,19 +153,19 @@ function update(){
 
   // surface
   moonSurface.style.filter =
-    `brightness(${0.92 + illum * 0.15}) contrast(1.02)`;
+    `brightness(${0.95 + illum * 0.2}) contrast(1.04)`;
 
   // depth
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,${0.05 * illum}) 0%,
-      rgba(255,255,255,${0.02 * illum}) 40%,
+      rgba(255,255,255,${0.06 * illum}) 0%,
+      rgba(255,255,255,${0.025 * illum}) 40%,
       rgba(0,0,0,0.12) 100%
     )
   `;
 
-  // 🌙 edge glow strength (subtle + phase dependent)
-  moonEdgeGlow.style.opacity = 0.08 + illum * 0.12;
+  // edge glow (visible on iPhone)
+  moonEdgeGlow.style.opacity = 0.18 + illum * 0.2;
 
   requestAnimationFrame(update);
 }
