@@ -38,7 +38,7 @@
       z-index:1;
     "></div>
 
-    <!-- 🌑 SOLID SHADOW (UNDER) -->
+    <!-- 🌑 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:110%;
@@ -47,11 +47,11 @@
       left:-5%;
       border-radius:50%;
       background:black;
-      opacity:0.88;
+      opacity:0.92;
       z-index:2;
     "></div>
 
-    <!-- 🌗 TERMINATOR (ON TOP — THIS IS KEY) -->
+    <!-- 🌗 TERMINATOR (LIGHTER + READABLE) -->
     <div id="terminatorBand" style="
       position:absolute;
       width:115%;
@@ -62,10 +62,11 @@
       z-index:3;
       background: radial-gradient(circle,
         rgba(0,0,0,0) 48%,
-        rgba(0,0,0,0.25) 52%,
-        rgba(0,0,0,0.5) 55%,
-        rgba(0,0,0,0.75) 58%,
-        rgba(0,0,0,1) 61%
+        rgba(0,0,0,0.12) 52%,
+        rgba(0,0,0,0.25) 56%,
+        rgba(0,0,0,0.4) 60%,
+        rgba(0,0,0,0.6) 64%,
+        rgba(0,0,0,0.8) 68%
       );
     "></div>
 
@@ -95,7 +96,7 @@ const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 
-// ⭐ stars
+// stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -127,13 +128,11 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌑 shadow
+  // movement
   shadowMain.style.transform = `translateX(${offset}px)`;
-
-  // 🌗 edge (same position)
   terminatorBand.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 libration
+  // libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
@@ -143,7 +142,7 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
-  // 🌌 sky
+  // sky
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
