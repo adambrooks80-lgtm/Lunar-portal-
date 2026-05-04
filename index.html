@@ -10,11 +10,9 @@
 <!-- 🌌 SKY -->
 <div id="skyWrap">
   <div id="stars"></div>
-  <div id="skyLift"></div>
-  <div id="moonGlow"></div>
 </div>
 
-<!-- 🌙 MOON -->
+<!-- 🌙 MOON SYSTEM -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -24,6 +22,18 @@
   height:260px;
 ">
 
+  <!-- 🌌 LOCAL SKY LIFT + GLOW (NOW CORRECTLY LAYERED) -->
+  <div id="moonAtmosphere" style="
+    position:absolute;
+    width:300%;
+    height:300%;
+    top:-100%;
+    left:-100%;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:0;
+  "></div>
+
   <div style="
     position:absolute;
     width:100%;
@@ -32,7 +42,7 @@
     overflow:hidden;
   ">
 
-    <!-- SURFACE -->
+    <!-- 🌙 SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -42,7 +52,7 @@
       z-index:1;
     "></div>
 
-    <!-- DEPTH -->
+    <!-- 🌙 DEPTH -->
     <div id="moonDepth" style="
       position:absolute;
       width:100%;
@@ -52,7 +62,7 @@
       z-index:2;
     "></div>
 
-    <!-- SHADOW -->
+    <!-- 🌑 SHADOW (NOW BLOCKS EVERYTHING ABOVE IT) -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -100,14 +110,6 @@
   height:100%;
 }
 
-#skyLift,
-#moonGlow{
-  position:absolute;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-}
-
 .star{
   position:absolute;
   background:white;
@@ -124,10 +126,9 @@ const start = Date.now();
 const shadowMain = document.getElementById("shadowMain");
 const moonDepth = document.getElementById("moonDepth");
 const moonSurface = document.getElementById("moonSurface");
-const skyLift = document.getElementById("skyLift");
-const moonGlow = document.getElementById("moonGlow");
+const moonAtmosphere = document.getElementById("moonAtmosphere");
 
-// stars
+// ⭐ stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -161,10 +162,14 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // shadow
+  // 🌑 SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // depth
+  // 🌙 SURFACE (balanced contrast)
+  moonSurface.style.filter =
+    `brightness(${0.92 + illum * 0.15}) contrast(1.02)`;
+
+  // 🌙 DEPTH
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
       rgba(255,255,255,${0.05 * illum}) 0%,
@@ -173,27 +178,13 @@ function update(){
     )
   `;
 
-  // surface
-  moonSurface.style.filter =
-    `brightness(${0.92 + illum * 0.15}) contrast(1.02)`;
-
-  // sky lift (keeps ring gone)
-  skyLift.style.background = `
+  // 🌌 COMBINED SKY LIFT + GLOW (NOW CORRECTLY OCCLUDED)
+  moonAtmosphere.style.background = `
     radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,0.015) 0%,
-      rgba(255,255,255,0.02) 20%,
-      rgba(255,255,255,0.015) 35%,
-      rgba(255,255,255,0) 80%
-    )
-  `;
-
-  // 🌙 OUTER GLOW (carefully shaped — no ring)
-  moonGlow.style.background = `
-    radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,${0.05 * illum}) 30%,
-      rgba(255,255,255,${0.03 * illum}) 55%,
-      rgba(255,255,255,0) 95%
+      rgba(255,255,255,0.02) 0%,
+      rgba(255,255,255,${0.03 * illum}) 25%,
+      rgba(255,255,255,${0.02 * illum}) 50%,
+      rgba(255,255,255,0) 90%
     )
   `;
 
