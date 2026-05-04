@@ -37,22 +37,23 @@
       background-size:cover;
     "></div>
 
-    <!-- 🌗 TERMINATOR (WIDER + CORRECT DIRECTION) -->
+    <!-- 🌗 TERMINATOR (STRONGER + WIDER) -->
     <div id="terminatorBand" style="
       position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
+      width:130%;
+      height:130%;
+      top:-15%;
+      left:-15%;
       border-radius:50%;
       background: radial-gradient(circle,
-        rgba(0,0,0,1) 46%,
-        rgba(0,0,0,0.9) 50%,
-        rgba(0,0,0,0.7) 55%,
-        rgba(0,0,0,0.45) 60%,
-        rgba(0,0,0,0.25) 64%,
-        rgba(0,0,0,0.1) 68%,
-        rgba(0,0,0,0) 72%
+        rgba(0,0,0,1) 44%,
+        rgba(0,0,0,0.95) 48%,
+        rgba(0,0,0,0.85) 52%,
+        rgba(0,0,0,0.65) 58%,
+        rgba(0,0,0,0.45) 64%,
+        rgba(0,0,0,0.25) 70%,
+        rgba(0,0,0,0.12) 76%,
+        rgba(0,0,0,0) 82%
       );
     "></div>
 
@@ -65,7 +66,7 @@
       left:-5%;
       border-radius:50%;
       background:black;
-      opacity:0.92;
+      opacity:0.88;
     "></div>
 
   </div>
@@ -94,7 +95,7 @@ const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 
-// ⭐ stars
+// stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -121,18 +122,16 @@ function update(){
   const angle = phase * Math.PI * 2;
 
   const moonRadius = 130;
-  const shadowRadius = 145;
+  const shadowRadius = 150;
   const travel = moonRadius + shadowRadius;
 
   const offset = Math.cos(angle) * travel;
 
-  // 🌑 shadow
+  // shadow + terminator aligned
   shadowMain.style.transform = `translateX(${offset}px)`;
-
-  // 🌗 terminator
   terminatorBand.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 subtle libration
+  // subtle libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
@@ -142,7 +141,7 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
-  // 🌌 sky
+  // sky
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
