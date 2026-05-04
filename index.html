@@ -48,7 +48,7 @@
       z-index:2;
     "></div>
 
-    <!-- ✨ TERMINATOR EDGE LIFT (NEW — THIS IS B) -->
+    <!-- ✨ TERMINATOR EDGE LIFT -->
     <div id="edgeLift" style="
       position:absolute;
       width:100%;
@@ -117,7 +117,7 @@ const edgeLift = document.getElementById("edgeLift");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 
-// stars
+// ⭐ stars
 const starContainer = document.getElementById("stars");
 
 for(let i=0;i<100;i++){
@@ -151,6 +151,7 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
+  // 🌑 SHADOW
   shadowMain.style.transform = `translateX(${offset}px)`;
 
   // 🌙 DEPTH
@@ -162,29 +163,30 @@ function update(){
     )
   `;
 
-  // 🌙 SURFACE
+  // 🌙 SURFACE PRESENCE
   moonSurface.style.filter =
     `brightness(${0.9 + illum * 0.18}) contrast(1.08)`;
 
-  // ✨ TERMINATOR EDGE LIFT (SUBTLE + PHASE DEPENDENT)
-  const edgeStrength = Math.sin(angle) * 0.5 + 0.5; // peaks at crescent
+  // ✨ TERMINATOR EDGE LIFT (IMPROVED VERSION)
+  const edgeStrength = Math.pow(Math.sin(angle), 2);
 
-  edgeLift.style.opacity = 0.12 * edgeStrength;
+  edgeLift.style.opacity = 0.18 * edgeStrength;
 
   edgeLift.style.background = `
     radial-gradient(circle,
-      rgba(255,255,255,0.25) 48%,
-      rgba(255,255,255,0.12) 50%,
-      rgba(255,255,255,0.05) 52%,
-      rgba(255,255,255,0) 55%
+      rgba(255,255,255,0.35) 47%,
+      rgba(255,255,255,0.18) 49%,
+      rgba(255,255,255,0.08) 51%,
+      rgba(255,255,255,0.02) 53%,
+      rgba(255,255,255,0) 56%
     )
   `;
 
-  // slight irregular drift (break perfection)
+  // 🌙 subtle drift (break perfection)
   edgeLift.style.transform =
-    `translate(${Math.sin(elapsed*0.001)*1.5}px, ${Math.cos(elapsed*0.001)*1.5}px)`;
+    `translate(${Math.sin(elapsed*0.001)*1.2}px, ${Math.cos(elapsed*0.001)*1.2}px)`;
 
-  // motion
+  // 🌙 MOON MOTION
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
@@ -194,6 +196,7 @@ function update(){
   moonSurface.style.transform =
     `rotate(${rotation}deg)`;
 
+  // 🌌 SKY
   skyWrap.style.transform =
     `rotate(${phase * 360}deg)`;
 
