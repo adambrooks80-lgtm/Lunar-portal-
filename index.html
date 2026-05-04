@@ -7,10 +7,13 @@
   overflow:hidden;
 ">
 
+<!-- 🌌 SKY -->
 <div id="skyWrap">
   <div id="stars"></div>
+  <div id="ambientGlow"></div>
 </div>
 
+<!-- 🌙 MOON -->
 <div id="moonWrap" style="
   position:absolute;
   top:50%;
@@ -28,7 +31,7 @@
     overflow:hidden;
   ">
 
-    <!-- 🌙 MOON SURFACE -->
+    <!-- 🌙 SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -38,7 +41,7 @@
       z-index:1;
     "></div>
 
-    <!-- 🌙 INTERNAL DEPTH (THIS IS THE KEY ADDITION) -->
+    <!-- 🌙 DEPTH -->
     <div id="moonDepth" style="
       position:absolute;
       width:100%;
@@ -83,8 +86,24 @@
 </div>
 
 <style>
-#skyWrap{ position:absolute; width:100%; height:100%; }
-#stars{ position:absolute; width:100%; height:100%; }
+#skyWrap{
+  position:absolute;
+  width:100%;
+  height:100%;
+}
+
+#stars{
+  position:absolute;
+  width:100%;
+  height:100%;
+}
+
+#ambientGlow{
+  position:absolute;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
 
 .star{
   position:absolute;
@@ -101,6 +120,7 @@ const start = Date.now();
 const shadowMain = document.getElementById("shadowMain");
 const moonDepth = document.getElementById("moonDepth");
 const moonSurface = document.getElementById("moonSurface");
+const ambientGlow = document.getElementById("ambientGlow");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
 
@@ -130,7 +150,7 @@ function update(){
   const phase = (elapsed % cycle) / cycle;
   const angle = phase * Math.PI * 2;
 
-  const illum = (1 - Math.cos(angle)) / 2; // 0 → 1
+  const illum = (1 - Math.cos(angle)) / 2;
 
   const moonRadius = 130;
   const shadowRadius = 150;
@@ -140,19 +160,29 @@ function update(){
 
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌙 INTERNAL DEPTH (SUBTLE SPHERE EFFECT)
+  // 🌙 DEPTH
   moonDepth.style.background = `
     radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,${0.06 * illum}) 0%,
-      rgba(255,255,255,${0.03 * illum}) 40%,
-      rgba(0,0,0,${0.08 + (1 - illum)*0.08}) 100%
+      rgba(255,255,255,${0.05 * illum}) 0%,
+      rgba(255,255,255,${0.02 * illum}) 40%,
+      rgba(0,0,0,${0.1}) 100%
     )
   `;
 
-  // 🌙 very subtle presence shift
+  // 🌙 SURFACE PRESENCE
   moonSurface.style.filter =
     `brightness(${0.92 + illum * 0.12}) contrast(1.05)`;
 
+  // 🌌 AMBIENT GLOW (VERY SUBTLE)
+  ambientGlow.style.background = `
+    radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,${0.025 * illum}) 0%,
+      rgba(255,255,255,${0.01 * illum}) 25%,
+      rgba(255,255,255,0) 60%
+    )
+  `;
+
+  // motion
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
 
