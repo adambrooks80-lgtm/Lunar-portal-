@@ -35,42 +35,10 @@
       height:100%;
       background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
       background-size:cover;
+      z-index:1;
     "></div>
 
-    <!-- 🌗 TERMINATOR (THIN + HIGH CONTRAST) -->
-    <div id="terminatorBand" style="
-      position:absolute;
-      width:115%;
-      height:115%;
-      top:-7.5%;
-      left:-7.5%;
-      border-radius:50%;
-      background: radial-gradient(circle,
-        rgba(0,0,0,1) 49%,
-        rgba(0,0,0,0.9) 52%,
-        rgba(0,0,0,0.6) 55%,
-        rgba(0,0,0,0.25) 58%,
-        rgba(0,0,0,0) 61%
-      );
-    "></div>
-
-    <!-- 🌙 EDGE TEXTURE (NEW — REAL BREAKUP) -->
-    <div id="edgeNoise" style="
-      position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
-      border-radius:50%;
-      pointer-events:none;
-      opacity:0.18;
-      mix-blend-mode:overlay;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
-      background-size:2px 2px;
-    "></div>
-
-    <!-- 🌑 SHADOW -->
+    <!-- 🌑 SOLID SHADOW (UNDER) -->
     <div id="shadowMain" style="
       position:absolute;
       width:110%;
@@ -79,7 +47,26 @@
       left:-5%;
       border-radius:50%;
       background:black;
-      opacity:0.9;
+      opacity:0.88;
+      z-index:2;
+    "></div>
+
+    <!-- 🌗 TERMINATOR (ON TOP — THIS IS KEY) -->
+    <div id="terminatorBand" style="
+      position:absolute;
+      width:115%;
+      height:115%;
+      top:-7.5%;
+      left:-7.5%;
+      border-radius:50%;
+      z-index:3;
+      background: radial-gradient(circle,
+        rgba(0,0,0,0) 48%,
+        rgba(0,0,0,0.25) 52%,
+        rgba(0,0,0,0.5) 55%,
+        rgba(0,0,0,0.75) 58%,
+        rgba(0,0,0,1) 61%
+      );
     "></div>
 
   </div>
@@ -104,7 +91,6 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const terminatorBand = document.getElementById("terminatorBand");
-const edgeNoise = document.getElementById("edgeNoise");
 const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
@@ -144,12 +130,8 @@ function update(){
   // 🌑 shadow
   shadowMain.style.transform = `translateX(${offset}px)`;
 
-  // 🌗 terminator
+  // 🌗 edge (same position)
   terminatorBand.style.transform = `translateX(${offset}px)`;
-
-  // 🌙 edge noise drift (very subtle)
-  edgeNoise.style.transform =
-    `translateX(${offset}px) translateY(${Math.sin(elapsed*0.002)*1.5}px)`;
 
   // 🌙 libration
   const rotation = Math.sin(elapsed * 0.00005) * 4;
