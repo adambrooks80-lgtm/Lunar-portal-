@@ -51,40 +51,23 @@
       z-index:2;
     "></div>
 
-    <!-- 🌗 TERMINATOR (SOFTER + SHALLOW) -->
+    <!-- 🌗 TERMINATOR (CORRECT DIRECTION) -->
     <div id="terminatorBand" style="
       position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
+      width:115%;
+      height:115%;
+      top:-7.5%;
+      left:-7.5%;
       border-radius:50%;
       z-index:3;
       background: radial-gradient(circle,
-        rgba(0,0,0,0) 45%,
-        rgba(0,0,0,0.08) 50%,
-        rgba(0,0,0,0.18) 55%,
-        rgba(0,0,0,0.32) 60%,
-        rgba(0,0,0,0.5) 66%,
-        rgba(0,0,0,0.7) 72%
+        rgba(0,0,0,0.8) 48%,
+        rgba(0,0,0,0.6) 52%,
+        rgba(0,0,0,0.35) 56%,
+        rgba(0,0,0,0.15) 60%,
+        rgba(0,0,0,0.05) 63%,
+        rgba(0,0,0,0) 66%
       );
-    "></div>
-
-    <!-- 🌙 EDGE BREAKUP (MORE VISIBLE BUT NATURAL) -->
-    <div id="edgeNoise" style="
-      position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
-      border-radius:50%;
-      pointer-events:none;
-      z-index:4;
-      opacity:0.12;
-      mix-blend-mode:overlay;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px);
-      background-size:3px 3px;
     "></div>
 
   </div>
@@ -109,7 +92,6 @@ const start = Date.now();
 
 const shadowMain = document.getElementById("shadowMain");
 const terminatorBand = document.getElementById("terminatorBand");
-const edgeNoise = document.getElementById("edgeNoise");
 const moonSurface = document.getElementById("moonSurface");
 const moonWrap = document.getElementById("moonWrap");
 const skyWrap = document.getElementById("skyWrap");
@@ -148,10 +130,6 @@ function update(){
 
   shadowMain.style.transform = `translateX(${offset}px)`;
   terminatorBand.style.transform = `translateX(${offset}px)`;
-
-  // subtle noise drift (breaks perfection)
-  edgeNoise.style.transform =
-    `translateX(${offset}px) translateY(${Math.sin(elapsed*0.002)*2}px)`;
 
   const rotation = Math.sin(elapsed * 0.00005) * 4;
   const tilt = 12 + Math.sin(angle * 0.5) * 5;
