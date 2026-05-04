@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html>
-<body style="
-  margin:0;
-  background:black;
-  height:100vh;
-  overflow:hidden;
-">
+<body style="margin:0;background:black;height:100vh;overflow:hidden;">
 
 <div id="skyWrap">
   <div id="stars"></div>
@@ -20,16 +15,17 @@
   height:260px;
 ">
 
-  <!-- 🌙 BLOOM LAYER (KEY PART) -->
-  <div id="moonBloom" style="
+  <!-- 🌙 EDGE BLEED (NEW APPROACH) -->
+  <div id="moonEdgeGlow" style="
     position:absolute;
     width:100%;
     height:100%;
     border-radius:50%;
     background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
     background-size:cover;
-    filter:blur(2px);
-    opacity:0.25;
+    filter:blur(1.2px) brightness(1.4);
+    opacity:0.12;
+    mix-blend-mode:screen;
     pointer-events:none;
     z-index:0;
   "></div>
@@ -42,7 +38,6 @@
     overflow:hidden;
   ">
 
-    <!-- 🌙 SURFACE -->
     <div id="moonSurface" style="
       position:absolute;
       width:100%;
@@ -52,7 +47,6 @@
       z-index:1;
     "></div>
 
-    <!-- 🌙 DEPTH -->
     <div id="moonDepth" style="
       position:absolute;
       width:100%;
@@ -62,7 +56,6 @@
       z-index:2;
     "></div>
 
-    <!-- 🌑 SHADOW -->
     <div id="shadowMain" style="
       position:absolute;
       width:120%;
@@ -75,20 +68,16 @@
 
       -webkit-mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.9) 52%,
-        rgba(0,0,0,0.6) 54%,
-        rgba(0,0,0,0.25) 56%,
-        rgba(0,0,0,0.08) 58%,
-        rgba(0,0,0,0) 60%
+        rgba(0,0,0,0.85) 53%,
+        rgba(0,0,0,0.4) 57%,
+        rgba(0,0,0,0) 62%
       );
 
       mask-image: radial-gradient(circle,
         rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.9) 52%,
-        rgba(0,0,0,0.6) 54%,
-        rgba(0,0,0,0.25) 56%,
-        rgba(0,0,0,0.08) 58%,
-        rgba(0,0,0,0) 60%
+        rgba(0,0,0,0.85) 53%,
+        rgba(0,0,0,0.4) 57%,
+        rgba(0,0,0,0) 62%
       );
     "></div>
 
@@ -97,8 +86,8 @@
 </div>
 
 <style>
-#skyWrap{ position:absolute; width:100%; height:100%; }
-#stars{ position:absolute; width:100%; height:100%; }
+#skyWrap{position:absolute;width:100%;height:100%;}
+#stars{position:absolute;width:100%;height:100%;}
 
 .star{
   position:absolute;
@@ -115,7 +104,7 @@ const start = Date.now();
 const shadowMain = document.getElementById("shadowMain");
 const moonSurface = document.getElementById("moonSurface");
 const moonDepth = document.getElementById("moonDepth");
-const moonBloom = document.getElementById("moonBloom");
+const moonEdgeGlow = document.getElementById("moonEdgeGlow");
 
 // stars
 const starContainer = document.getElementById("stars");
@@ -151,7 +140,7 @@ function update(){
 
   const offset = Math.cos(angle) * travel;
 
-  // shadow movement
+  // shadow
   shadowMain.style.transform = `translateX(${offset}px)`;
 
   // surface
@@ -167,8 +156,8 @@ function update(){
     )
   `;
 
-  // 🌙 BLOOM STRENGTH (subtle)
-  moonBloom.style.opacity = 0.15 + illum * 0.2;
+  // 🌙 edge glow strength (subtle + phase dependent)
+  moonEdgeGlow.style.opacity = 0.08 + illum * 0.12;
 
   requestAnimationFrame(update);
 }
