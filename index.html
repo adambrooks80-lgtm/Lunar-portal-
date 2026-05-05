@@ -2,14 +2,10 @@
 <html>
 <body style="
   margin:0;
-  background:linear-gradient(45deg, #ff6600, #00ffff);
+  background:linear-gradient(45deg, #7fc8a9, #6aa3d8);
   height:100vh;
   overflow:hidden;
 ">
-
-<!-- 🌌 SKY (optional stars) -->
-<div id="sky">
-</div>
 
 <!-- 🌙 MOON -->
 <div id="moon" style="
@@ -21,6 +17,16 @@
   height:260px;
   border-radius:50%;
   overflow:hidden;
+
+  /* ✅ THIS is the key fix (edge trim) */
+  -webkit-mask-image: radial-gradient(circle,
+    rgba(0,0,0,1) 97.5%,
+    rgba(0,0,0,0) 100%
+  );
+  mask-image: radial-gradient(circle,
+    rgba(0,0,0,1) 97.5%,
+    rgba(0,0,0,0) 100%
+  );
 ">
 
   <!-- 🌙 CROPPED MOON IMAGE -->
