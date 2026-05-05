@@ -2,155 +2,38 @@
 <html>
 <body style="
   margin:0;
-background:#ff6600;
+  background:#030305;
   height:100vh;
   overflow:hidden;
 ">
 
-<!-- 🌌 SKY -->
-<div id="skyWrap">
-  <div id="stars"></div>
+<!-- 🌌 SKY (optional stars) -->
+<div id="sky">
 </div>
 
-<!-- 🌙 MOON WRAP -->
-<div id="moonWrap" style="
+<!-- 🌙 MOON -->
+<div id="moon" style="
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
   width:260px;
   height:260px;
+  border-radius:50%;
+  overflow:hidden;
 ">
 
-  <!-- ⚪ TEST HALO -->
-  <div id="testHalo" style="
-    position:absolute;
-    width:120%;
-    height:120%;
-    top:-10%;
-    left:-10%;
-    border-radius:50%;
-    background:white;
-    opacity:0.5;
-    z-index:0;
+  <!-- 🌙 CROPPED MOON IMAGE -->
+  <div style="
+    width:112%;
+    height:112%;
+    margin:-6%;
+    background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
+    background-size:cover;
+    background-position:center;
   "></div>
 
-  <!-- 🌙 MOON + SHADOW CLIPPED TOGETHER -->
-  <div id="moonClip" style="
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    overflow:hidden;
-    z-index:1;
-  ">
-
-    <!-- 🌙 SURFACE -->
-    <div id="moonSurface" style="
-      position:absolute;
-      width:100%;
-      height:100%;
-      background:url('https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg');
-      background-size:cover;
-    "></div>
-
-    <!-- 🌑 SHADOW (now contained inside moon) -->
-    <div id="shadowMain" style="
-      position:absolute;
-      width:120%;
-      height:120%;
-      top:-10%;
-      left:-10%;
-      border-radius:50%;
-      background:black;
-
-      -webkit-mask-image: radial-gradient(circle,
-        rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.85) 54%,
-        rgba(0,0,0,0.4) 58%,
-        rgba(0,0,0,0) 63%
-      );
-
-      mask-image: radial-gradient(circle,
-        rgba(0,0,0,1) 50%,
-        rgba(0,0,0,0.85) 54%,
-        rgba(0,0,0,0.4) 58%,
-        rgba(0,0,0,0) 63%
-      );
-    "></div>
-
-  </div>
-
 </div>
-
-<style>
-#skyWrap{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
-
-#stars{
-  position:absolute;
-  width:100%;
-  height:100%;
-}
-
-.star{
-  position:absolute;
-  background:white;
-  border-radius:50%;
-}
-</style>
-
-<script>
-
-const cycle = 12000;
-const start = Date.now();
-
-const shadowMain = document.getElementById("shadowMain");
-
-// ⭐ stars
-const starContainer = document.getElementById("stars");
-
-for(let i=0;i<100;i++){
-  const s = document.createElement("div");
-  s.className = "star";
-
-  const size = Math.random()*1.4 + 0.4;
-  s.style.width = size+"px";
-  s.style.height = size+"px";
-
-  s.style.left = Math.random()*window.innerWidth+"px";
-  s.style.top = Math.random()*window.innerHeight+"px";
-  s.style.opacity = Math.random()*0.6 + 0.2;
-
-  starContainer.appendChild(s);
-}
-
-function update(){
-
-  const now = Date.now();
-  const elapsed = now - start;
-
-  const phase = (elapsed % cycle) / cycle;
-  const angle = phase * Math.PI * 2;
-
-  const moonRadius = 130;
-  const shadowRadius = 150;
-  const travel = moonRadius + shadowRadius;
-
-  const offset = Math.cos(angle) * travel;
-
-  // 🌑 shadow movement
-  shadowMain.style.transform = `translateX(${offset}px)`;
-
-  requestAnimationFrame(update);
-}
-
-update();
-
-</script>
 
 </body>
 </html>
